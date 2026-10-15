@@ -4,9 +4,11 @@ import {createHash} from 'node:crypto';
 import {resolve,relative,join} from 'node:path';
 const root=resolve(new URL('..',import.meta.url).pathname.replace(/^\/([A-Za-z]:)/,'$1'));
 const canonical={
- 'ember-locomotion-v2.png':'Fagulim canonical 4x3 RGBA sheet: upright, eight walk phases, rise/sit, blink, hurt',
- 'ember-attack.png':'Fagulim four authored attack poses, 2x2 RGBA sheet',
- 'creatures-taskmon.png':'Six collection species, approved 3x2 RGBA atlas',
+ 'ember-locomotion-v2.png':'Historical ordinary-fox poses; superseded by authored botanical ember monster rig',
+ 'ember-attack.png':'Historical ordinary-fox attack poses; superseded in production',
+ 'ember-taskmon.png':'Fagulim redesigned botanical ember monster: canonical concept and portrait, user-requested redesign pending artistic review',
+ 'ember-parts.png':'Fagulim redesigned twelve authored rig parts: botanical leaf armor and seedpod ember tail',
+ 'creatures-taskmon.png':'Collection atlas: five active identities plus historical ordinary-fox ember reference',
  'enemies.png':'Nine enemy species, original RGBA atlas',
  'world-forest.png':'Lantern Forest high-resolution illustrated background',
  'world-coast.png':'Glass Coast high-resolution illustrated background',

@@ -69,8 +69,10 @@ var sprite_regions: Dictionary = {}
 var action_atlases: Dictionary = {}
 var action_regions: Dictionary = {}
 var action_catalogue: Dictionary = {}
-var creature_motion = preload("res://scripts/creature_motion.gd").new()
-var pose_player = preload("res://scripts/creature_pose_player.gd").new()
+var creature_rigs = preload("res://scripts/creature_rig_pool.gd").new()
+@export var native_rigs_enabled = true
+var native_rig_fallbacks: Dictionary = {}
+var ember_portrait: Texture2D
 var camera_zoom = 0.90
 var battle_blend = 0.0
 var encounter_director = preload("res://scripts/encounter_director.gd").new()
@@ -125,6 +127,7 @@ func _ready() -> void:
 		enemy_atlas = load("res://assets/enemies.png")
 	if ResourceLoader.exists("res://assets/creatures-taskmon.png"):
 		detailed_atlas = load("res://assets/creatures-taskmon.png")
+	ember_portrait = load("res://assets/ember-taskmon.png")
 	for icon_id in ["heart", "sword", "shield", "boot", "bag", "expand", "compact", "pause", "play", "settings", "sound", "book", "star", "spark", "leaf", "orb", "crystal", "core", "close", "upgrade", "auto", "trophy", "coin", "xp", "eye"]:
 		icons[icon_id] = load("res://assets/icons/" + icon_id + ".svg")
 	for region_key in ["forest", "coast", "ruins"]:
@@ -139,7 +142,6 @@ func _ready() -> void:
 		by_id[item.id] = item
 	_cache_sprite_regions()
 	_cache_action_poses()
-	pose_player.prepare()
 	texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	settings = ConfigFile.new()
 	settings.load(SETTINGS_PATH)
@@ -176,6 +178,7 @@ func _session_section() -> String:
 	return "session_" + server_url.sha256_text().left(12)
 
 func _exit_tree() -> void:
+	creature_rigs.dispose()
 	# Explicitly retire active voices before the audio server tears down playback.
 	if is_instance_valid(sound_player):
 		sound_player.stop()
@@ -195,14 +198,16 @@ func _save_settings() -> void:
 	settings.save(SETTINGS_PATH)
 
 func _process(delta: float) -> void:
+	creature_rigs.begin_frame(delta, get_window().mode != Window.MODE_MINIMIZED and is_visible_in_tree())
 	elapsed += delta
 	var in_combat = player.get("battle") != null
 	var phase_before = encounter_director.phase
 	var clock_before = encounter_director.locomotion_clock
 	var offset_before = encounter_director.enemy_world_offset
 	var menus_open = is_instance_valid(modal) and modal.visible
+	var waiting_for_stance = _party_is_seated()
 	encounter_director.journey_active = player.get("expedition") != null and not menus_open
-	encounter_director.update(delta, 0.0 if menus_open else world_speed_multiplier * travel_speed / 24.0, in_combat and player.battle.get("result") != null)
+	encounter_director.update(delta, 0.0 if menus_open or waiting_for_stance else world_speed_multiplier * travel_speed / 24.0, in_combat and player.battle.get("result") != null)
 	enemy_step_speed = (offset_before - encounter_director.enemy_world_offset) / maxf(0.001, delta)
 	route_distance += encounter_director.consume_travel_distance()
 	walk_clock += encounter_director.locomotion_clock - clock_before
@@ -217,7 +222,7 @@ func _process(delta: float) -> void:
 	draw_elapsed += delta
 	wave_elapsed += delta
 	var exploring = not player.is_empty() and player.get("expedition") != null
-	if exploring and player.get("battle") == null and (not is_instance_valid(modal) or not modal.visible):
+	if exploring and not waiting_for_stance and player.get("battle") == null and (not is_instance_valid(modal) or not modal.visible):
 		route_distance += delta * travel_speed * world_speed_multiplier
 	if exploring:
 		var partial = clampf((20.0 - float(player.get("next_tick", 20)) + elapsed - discovery_sample_time) / 20.0, 0, 1)
@@ -692,53 +697,46 @@ func _bar(rect: Rect2, ratio: float, color: Color) -> void:
 	if ratio > 0:
 		_panel(Rect2(rect.position, Vector2(maxf(3, rect.size.x * clampf(ratio, 0, 1)), rect.size.y)), color, Color.TRANSPARENT, 4)
 
-func _sprite(id: String, pos: Vector2, scale_px: float = 3, shiny: bool = false, frozen: bool = false, flip: bool = false, flash: float = 0.0, action_pose: float = 0.0, locomotion: bool = false, opacity: float = 1.0, action_frame: int = -1, animation: Dictionary = {}) -> void:
-	if not animation.has("key"):
-		animation.key = id + str(pos.round())
+func _sprite(id: String, pos: Vector2, scale_px: float = 3, shiny: bool = false, frozen: bool = false, flip: bool = false, flash: float = 0.0, _action_pose: float = 0.0, locomotion: bool = false, opacity: float = 1.0, _action_frame: int = -1, animation: Dictionary = {}) -> void:
 	var spec = by_id.get(id, catalogue.species[0])
-	var sheet = enemy_atlas if spec.get("sprite_atlas", "") == "enemy" else detailed_atlas
-	if sheet == null or not sprite_regions.has(id):
-		return
-	var source: Rect2 = sprite_regions[id]
 	var extent = scale_px * 32.0
-	var ratio = source.size / maxf(source.size.x, source.size.y)
-	var dimensions = Vector2(extent * ratio.x, extent * ratio.y)
-	if id == "ember" and not frozen and action_frame < 0:
-		var key = str(animation.get("key", id + str(roundi(pos.x))))
-		var pose = pose_player.sample(key, elapsed, locomotion, animation.get("combat", false))
-		if (locomotion and pose >= 1 and pose <= 8) or pose == 10:
-			pose = 0
-		if animation.get("state", "") == "hurt" and float(animation.get("age", 1)) < 0.30:
-			pose = 11
-		if pose >= 0:
-			sheet = pose_player.sheet
-			source = pose_player.regions[pose]
-			dimensions = pose_player.pose_size(pose, extent, ratio.y)
-			if pose == 0:
-				dimensions.y *= 1.0 + sin(elapsed * 2.4) * 0.004
-			frozen = true
-			# Drawn foot placements carry the stride; avoid a second IK cycle.
-			if pose == 0:
-				animation.upright = true
-				animation.eyes = creature_motion.upright_eyes(id)
-				animation.drawn_walk_cycle = false
-				frozen = false
-	if action_frame >= 0 and action_atlases.has(id):
-		sheet = action_atlases[id]
-		source = action_regions[id][clampi(action_frame, 0, 3)]
-		dimensions = _action_pose_size(id, action_frame, extent)
-		frozen = true
-		action_pose = 0.0
 	var foot = pos + Vector2(extent * 0.5, extent)
-	draw_set_transform(foot)
-	var target = Rect2(Vector2(-dimensions.x / 2, -dimensions.y), dimensions)
-	if flip:
-		target.position.x += dimensions.x
-		target.size.x = -dimensions.x
+	# Public flip means desired facing LEFT; authored sources may face either way.
+	var source_left = creature_rigs.source_faces_left(id)
+	var native_flip = flip != source_left
+	var key = str(animation.get("key", "preview:" + id))
+	var motion = animation.duplicate()
+	motion.seed = float(absi(key.hash()) % 65521)
+	motion.external_alpha = true
+	var state = str(motion.get("state", "locomotion" if locomotion else "idle"))
+	motion.state = "idle" if state == "stand" else state
+	if not motion.has("ground_speed"):
+		motion.ground_speed = travel_speed * world_speed_multiplier * 0.64
 	var tint = Color("fff0c7") if shiny else Color.WHITE
 	tint = tint.lerp(Color(2, 1.6, 1.6), clampf(flash, 0, 1))
 	tint.a = opacity
-	_draw_creature_mesh(sheet, source, target, id, frozen, tint, action_pose, locomotion, animation)
+	# Keep the physical foot anchor stable; bounds padding belongs to the pool.
+	var target = Rect2(Vector2(-extent * 0.5, -extent), Vector2(extent, extent))
+	if native_flip:
+		target.position.x += extent
+		target.size.x = -extent
+	draw_set_transform(foot)
+	var drawn = native_rigs_enabled and creature_rigs.paint(self, key, id, target, motion, tint)
+	if not drawn:
+		# Explicit static-art fallback only. The rejected whole-image limb rig is
+		# never used as an animation backend in production.
+		if native_rigs_enabled and not native_rig_fallbacks.has(id):
+			native_rig_fallbacks[id] = true
+			push_warning("Rig nativo indisponível: " + id + ". Retrato estático de segurança.")
+		var portrait = _portrait(id)
+		var sheet = portrait.atlas
+		if sheet != null:
+			var source: Rect2 = portrait.region
+			var dimensions = source.size / maxf(source.size.x, source.size.y) * extent
+			var fallback = Rect2(Vector2(-dimensions.x * 0.5, -dimensions.y), dimensions)
+			if flip != (spec.get("sprite_atlas", "") == "enemy"):
+				fallback.size.x = -dimensions.x
+			draw_texture_rect_region(sheet, fallback, source, tint)
 	draw_set_transform(Vector2.ZERO)
 	if shiny and opacity > 0.8:
 		_icon("spark", pos + Vector2(extent - 14, 0), 18)
@@ -747,7 +745,6 @@ func _prop(index: int, pos: Vector2, scale_px: float = 2) -> void:
 	draw_texture_rect_region(prop_atlas, Rect2(pos, Vector2(32, 48) * scale_px), Rect2(index * 32, 0, 32, 48))
 
 func _draw() -> void:
-	creature_motion.begin_frame()
 	draw_rect(Rect2(Vector2.ZERO, size), BG)
 	if compact and not player.is_empty():
 		_draw_compact()
@@ -850,6 +847,13 @@ func _draw_location() -> void:
 	draw_string_outline(font, Vector2(244, 218), waypoint.name, HORIZONTAL_ALIGNMENT_LEFT, -1, 14, 5, Color("12202b"))
 	_text(waypoint.name, Vector2(244, 218), 14, INK)
 
+func _party_is_seated() -> bool:
+	for id in player.get("team", []):
+		var actor = creature_rigs.actors.get("world:" + str(id), {})
+		if not actor.is_empty() and is_instance_valid(actor.rig) and float(actor.rig.sit_blend) > 0.001:
+			return true
+	return false
+
 func _draw_caravan() -> void:
 	_draw_location()
 	for i in range(player.team.size()):
@@ -861,7 +865,7 @@ func _draw_caravan() -> void:
 		if int(c.get("current_hp", c.stats.hp)) <= 0:
 			continue
 		_shadow(Vector2(x + 73.6, ground), 44, 8)
-		_sprite(c.species, Vector2(x + 73.6 - travel_scale * 16, ground - travel_scale * 32), travel_scale, c.shiny, false, false, 0.0, 0.0, walking, 1.0, -1, {"key": c.id, "state": "locomotion" if walking else "idle"})
+		_sprite(c.species, Vector2(x + 73.6 - travel_scale * 16, ground - travel_scale * 32), travel_scale, c.shiny, false, false, 0.0, 0.0, walking, 1.0, -1, {"key": "world:" + str(c.id), "state": "locomotion" if walking else "idle"})
 		if player.expedition != null:
 			var unit = {"id": c.id, "name": by_id[c.species].name, "level": c.level, "stats": c.stats, "hp": c.get("current_hp", c.stats.hp), "shield": 0}
 			_paint_unit_hud(unit, Vector2(x + 73.6, ground), travel_scale * 32, false, false, 1.0, float(unit.hp))
@@ -928,8 +932,8 @@ func _paint_fighter(unit: Dictionary, pos: Vector2, enemy: bool, sprite_scale: f
 	var action_pose = 0.0
 	var action_frame = -1
 	var approaching = encounter_director.phase == &"approach"
-	var animation = {"key": unit.id, "state": "locomotion" if approaching else "stand", "combat": true, "upright": true, "age": 0.0, "walk_clock": not enemy}
-	animation.ground_speed = 15.36 * world_speed_multiplier * travel_speed / 24.0 - enemy_step_speed if enemy else 15.36
+	var animation = {"key": "world:" + str(unit.id), "state": "locomotion" if approaching else "stand", "combat": true, "upright": true, "age": 0.0, "walk_clock": not enemy}
+	animation.ground_speed = travel_speed * world_speed_multiplier * 0.64 - enemy_step_speed if enemy else travel_speed * world_speed_multiplier * 0.64
 	for event in combat_sequence:
 		var age = elapsed - float(event.started)
 		if age < 0 or age > 1.5:
@@ -955,7 +959,7 @@ func _paint_fighter(unit: Dictionary, pos: Vector2, enemy: bool, sprite_scale: f
 			var recoil = sin(clampf(hurt / 0.38, 0, 1) * PI) * exp(-hurt * 4)
 			offset.x += recoil * (8 if small else 18) * (1 if enemy else -1)
 			action_pose -= recoil * 0.65
-	var facing_left = by_id[unit.species].get("sprite_atlas", "") == "enemy"
+	var facing_left = creature_rigs.source_faces_left(unit.species)
 	var visible_hp = float(displayed_hp.get(unit.id, unit.hp))
 	var arrival = clampf((elapsed - float(unit_birth.get(unit.id, elapsed - 1))) / 0.6, 0, 1)
 	var death_age = elapsed - float(unit_death.get(unit.id, elapsed + 1))
@@ -971,9 +975,18 @@ func _paint_fighter(unit: Dictionary, pos: Vector2, enemy: bool, sprite_scale: f
 			var phase = float(i) / 10.0
 			var motes = foot + Vector2(sin(phase * TAU + death_age * 2) * extent * 0.35, -extent * phase - death_age * 38)
 			draw_circle(motes, 1.5 + phase, Color(LILAC if enemy else MINT, opacity * 0.7), true, -1, true)
-	_sprite(unit.species, pos + offset + Vector2(0, (1.0 - arrival) * 8 - maxf(0, death_age) * 9), sprite_scale, unit.shiny, visible_hp <= 0, enemy != facing_left, flash, action_pose, approaching, opacity, action_frame, animation)
+	if death_age >= 0:
+		animation.state = "death"
+		animation.age = death_age
+	elif arrival < 1.0 and animation.state in ["stand", "locomotion"]:
+		animation.state = "appear"
+		animation.age = maxf(0, elapsed - float(unit_birth.get(unit.id, elapsed - 1)))
+	_sprite(unit.species, pos + offset + Vector2(0, (1.0 - arrival) * 8 - maxf(0, death_age) * 9), sprite_scale, unit.shiny, visible_hp <= 0, enemy, flash, action_pose, approaching, opacity, action_frame, animation)
 	unit_muzzles[unit.id] += offset
-	if action_frame >= 0 and action_atlases.has(unit.species):
+	if native_rigs_enabled and creature_rigs.actors.has(animation.key):
+		var animated_foot = foot + offset + Vector2(0, (1.0 - arrival) * 8 - maxf(0, death_age) * 9)
+		unit_muzzles[unit.id] = _native_muzzle(str(animation.key), animated_foot, extent, enemy != facing_left, facing_left)
+	elif action_frame >= 0 and action_atlases.has(unit.species):
 		var pose_size = _action_pose_size(unit.species, action_frame, extent)
 		var muzzle_uv = action_catalogue[unit.species].muzzles[action_frame]
 		unit_muzzles[unit.id] = foot + offset + Vector2((float(muzzle_uv[0]) - 0.5) * pose_size.x * (-1 if enemy else 1), (float(muzzle_uv[1]) - 1.0) * pose_size.y)
@@ -984,6 +997,17 @@ func _paint_fighter(unit: Dictionary, pos: Vector2, enemy: bool, sprite_scale: f
 			var a = PI * 0.12 + float(j) / 12.0 * PI * 0.76
 			ward.append((foot + Vector2(cos(a) * extent * 0.48, -sin(a) * extent * 1.02)).snapped(Vector2(2, 2)))
 		draw_polyline(ward, Color(0.6, 0.83, 1.0, opacity * 0.32), 2, false)
+
+func _native_muzzle(actor_key: String, foot: Vector2, extent: float, flip: bool, source_faces_left: bool) -> Vector2:
+	var rig = creature_rigs.actors[actor_key].rig
+	var values = rig.metadata.head
+	var head_rect = Rect2(float(values[0]), float(values[1]), float(values[2]), float(values[3]))
+	var rest_mouth = head_rect.position + head_rect.size * Vector2(0.12 if source_faces_left else 0.88, 0.64)
+	var point = rig.to_local(rig.bones.head.to_global(rest_mouth - rig.rest_points.head))
+	if flip:
+		point.x = -point.x
+	var bounds = rig.metadata.get("render_bounds", [-250, -360, 500, 360])
+	return foot + point * extent / float(bounds[3])
 
 func _paint_unit_hud(unit: Dictionary, foot: Vector2, extent: float, enemy: bool, small: bool, opacity: float, hp: float) -> void:
 	var width = 96.0 if small else 148.0
@@ -1059,7 +1083,7 @@ func _draw_card(index: int) -> void:
 	var spec = by_id[c.species]
 	var tint = Color(spec.color)
 	_panel(Rect2(x + 14, 584, 110, 140), Color(tint, 0.065), Color(tint, 0.22), 8)
-	_sprite(c.species, Vector2(x + 17, 590), 3.25, c.shiny, false)
+	_sprite(c.species, Vector2(x + 17, 590), 3.25, c.shiny, false, false, 0.0, 0.0, false, 1.0, -1, {"key": "card:" + str(c.id), "state": "idle"})
 	_text(spec.name, Vector2(x + 139, 607), 21, tint)
 	var name_width = font.get_string_size(spec.name, HORIZONTAL_ALIGNMENT_LEFT, -1, 21).x
 	_text("lvl " + str(int(c.level)), Vector2(x + 151 + name_width, 607), 14, GOLD)
@@ -1100,7 +1124,7 @@ func _draw_compact() -> void:
 			var x = 562 + i * 158
 			var ground = _ground_at(x + 48)
 			_shadow(Vector2(x + 48, ground), 35, 6)
-			_sprite(c.species, Vector2(x, ground - 96), 3.0, c.shiny, false, false, 0.0, 0.0, player.expedition != null)
+			_sprite(c.species, Vector2(x, ground - 96), 3.0, c.shiny, false, false, 0.0, 0.0, player.expedition != null, 1.0, -1, {"key": "world:" + str(c.id), "state": "locomotion" if player.expedition != null else "idle"})
 	_text(catalogue.regions[int(player.region)].name, Vector2(350, 39), 18, GOLD)
 	if battle != null:
 		_text("Vitória" if battle.get("result") == "win" else "Combate", Vector2(350, 62), 14, MINT)
@@ -1446,6 +1470,9 @@ func _portrait(id: String) -> AtlasTexture:
 	portrait.atlas = enemy_atlas if by_id[id].get("sprite_atlas", "") == "enemy" else detailed_atlas
 	portrait.set_meta("creature_id", id)
 	portrait.region = sprite_regions.get(id, Rect2(0, 0, 32, 32))
+	if id == "ember" and ember_portrait != null:
+		portrait.atlas = ember_portrait
+		portrait.region = ember_portrait.get_image().get_used_rect()
 	return portrait
 
 func _duration(seconds: float) -> String:
@@ -1623,16 +1650,6 @@ func _unhandled_key_input(event: InputEvent) -> void:
 		elif is_instance_valid(modal) and modal.visible:
 			modal.hide()
 			modal.queue_free()
-
-func _draw_creature_mesh(sheet: Texture2D, source: Rect2, target: Rect2, id: String, frozen: bool, tint: Color, action_pose: float = 0.0, locomotion: bool = false, animation: Dictionary = {}) -> void:
-	var key = str(animation.get("key", id + str(target.position)))
-	animation.seed = float(absi(key.hash()) % 65521)
-	if not animation.has("ground_speed"):
-		# walk_clock already integrates the shared speed multiplier. The stride
-		# uses its reference speed to avoid applying acceleration twice.
-		animation.ground_speed = 24.0 * 0.64
-	var motion_time = walk_clock if locomotion and (not animation.get("combat", false) or animation.get("walk_clock", false)) else elapsed
-	creature_motion.paint(self, sheet, source, target, id, motion_time, locomotion, frozen, tint, action_pose, animation)
 
 func _play_creature_sound(id: String, kind: String) -> void:
 	if not sound_enabled or sound_channels.is_empty():

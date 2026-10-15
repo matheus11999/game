@@ -6,7 +6,7 @@ Checkpoint de 15/10/2026, solicitado pelo usuário para continuar em cloud. Repo
 
 Ler `AGENTS.md`, este arquivo, `ART_DIRECTION.md`, `ASSET_REGISTRY.md`, `TASKMON_PLANO.md` e `CREATURE_MOTION.md`. Preservar o histórico de decisões abaixo. Conferir o código antes de assumir que o planejamento antigo descreve o estado atual. O projeto mudou de Brumora para TaskMon, mas caminhos de dados legados foram mantidos.
 
-**Próxima tarefa prioritária:** integrar o novo rig nativo de peças autorais ao renderer de produção, calibrar as quinze criaturas em movimento, corrigir fragmentos/encaixes e só então rodar análise sênior independente de design/UX/feedback/animação. O usuário pediu agentes especialistas e revisão de 0 a 10 com correções até atingir qualidade 9. A nota anterior 9 foi invalidada por defeitos reais; não copiá-la nem dar nota por passar testes técnicos.
+**Próxima tarefa prioritária:** revisar o Fagulim redesenhado e continuar calibrando as outras catorze criaturas em movimento, corrigindo fragmentos/encaixes. O rig de peças já foi integrado ao renderer de produção nesta sessão cloud. O usuário pediu agentes especialistas e revisão de 0 a 10 com correções até atingir qualidade 9. A nota anterior 9 foi invalidada por defeitos reais; não copiá-la nem dar nota por passar testes técnicos.
 
 ## O que o usuário acabou de pedir
 
@@ -17,7 +17,7 @@ Ler `AGENTS.md`, este arquivo, `ART_DIRECTION.md`, `ASSET_REGISTRY.md`, `TASKMON
 
 ## Estado real de animação: importante
 
-**Produção ainda usa `scripts/creature_motion.gd` dentro de `scripts/main.gd`. O novo pipeline NÃO foi conectado ao renderer principal neste checkpoint.** Isso foi deixado explícito para evitar entregar a integração sem a revisão visual necessária.
+**Produção agora usa `scripts/creature_rig_pool.gd` + `scripts/creature_rig.gd` dentro de `scripts/main.gd`.** O módulo creature_motion.gd permanece histórico e em testes isolados; não restaurar o backend de membros recortados do PNG inteiro. Fallback de segurança é retrato estático com aviso explícito, nunca o rig antigo.
 
 Novo pipeline já produzido/testado:
 
@@ -28,12 +28,22 @@ Novo pipeline já produzido/testado:
 - API: criar Pool; chamar `begin_frame(delta, enabled)` em `_process`; `paint(owner, actor_key, species_id, target_rect, animation, tint)` no desenho retorna bool; `available(id)` e `dispose()`.
 - `animation`: state (`idle`, `locomotion`, `attack`, `cast`, `hurt`, `blink`, `appear`, `death`), seed estável por exemplar, ground_speed em pixels do MUNDO por segundo, speed_factor opcional, age/progress para repetir eventos corretamente. Pool converte velocidade para espaço local conforme tamanho de desenho; fase recebe fator uma vez.
 - Não duplicar o antigo walk_clock na velocidade do novo rig. Cadência e comprimento de passada precisam acompanhar o mapa. Quadrúpedes, bípedes, voadores, flutuantes e serpente usam arquétipos diferentes.
-- Fox possui row_edges específicos; nem toda folha é uma grade perfeitamente quadrada. Reutilizar source_rects/metadata, não assumir dimensões uniformes entre espécies.
+- Fagulim possui source_rects específicos; nem toda folha é uma grade perfeitamente quadrada. Reutilizar source_rects/metadata, não assumir dimensões uniformes entre espécies.
 - Prompts completos e ferramenta usada: `docs/ART_PROMPTS_PARTS.md`. Foi usada imagegen embutida. `assets/art-manifest.json` registra hashes para consistência.
 
 Pendências já vistas na galeria: pequenos fragmentos em Espinbroto/thornbud, pé parcialmente separado em shardguard, peças de braço/perna em rootelder; revisar source_rects e encaixes. Conferir também proporção e material nas juntas de todas as espécies e o contato visível do pé pintado, não apenas o alvo IK matemático. Imagem de galeria não aprova movimento. Depois de integrar, medir custo/performance, minimizar janela, limpar pool e verificar ausência de leaks.
 
 Integração deve preservar: antecipação → emissão de projétil independente → impacto → recuperação, danos/sons/HP sincronizados, estados de dano, cast, escudo e cura. Não voltar a transladar só o PNG e chamar isso de ataque animado. Usar os estados do novo rig nos eventos existentes de `_paint_fighter`; aposentar o caminho antigo quando a alternativa estiver validada.
+
+
+## Atualização desta sessão cloud — 15/10/2026
+
+- Pedido mais recente: redesenhar a raposa como monstro que combine com TaskMon; usuário perguntou também por sentar/levantar e pela técnica de animação2D. Nova referência `assets/ember-taskmon.png`, folha autoral `assets/rigs/ember-parts.png`: folhas jade/carbonizadas, veios de brasa e cauda de semente flamejante. Retratos usam o mesmo conceito novo. Aprovação artística final pendente do usuário.
+- Native pool integrado em exploração, batalha, rodapé, cards e onboarding. Ator world:<id> acompanha os três modos sem recriar o rig. Opacidade de nascimento/morte pertence ao combate (external_alpha), sem multiplicação dupla. Muzzle acompanha o osso da cabeça.
+- Corrigidos ciclo com velocidade assinada, avanço único por tick, pausa/primeiro render, cleanup, alinhamento ao chão e espelhamento do viewport. Fonte da orientação agora é metadata faces_left (Espinbroto=true; padrão false), e não sprite_atlas enemy. Isso corrige Cascalhito olhando para longe do adversário e a origem errada do projétil.
+- Estratégia2D: peças autorais+ossos para movimento contínuo; cabeças neutral/blink/cast/hurt desenhadas; ataques ainda têm antecipação/recuperação procedurais compartilhadas, não ciclos exclusivos completos por criatura. Não prometer qualidade automática por usar Skeleton2D.
+- Testes usam Godot4.7.2 oficial Linux com OpenGL/llvmpipe em Xvfb; QA HTTP usa servidor **em memória na porta18787**, nunca o banco do usuário. Xvfb sem WM recusou minimização real; pause por ocultação verificada, minimizar no Windows ainda precisa de teste.
+- Capturas em /workspace/scratch são evidência local, não arquivos automaticamente distribuídos no Git. Nenhuma nota9 foi atribuída nesta revisão. Pendências das outras espécies continuam abaixo.
 
 ## Correções recentes já ativas no cliente
 
@@ -49,7 +59,7 @@ Integração deve preservar: antecipação → emissão de projétil independent
 
 - Fantasia coesa: folhas, ouro envelhecido e jade, fundo ilustrado e molduras; mundo em destaque, pouca redundância textual. Ações secundárias por ícone com tooltip.
 - Fonte de interface: TaskMon-Interface.ttf (Alegreya Sans SC Medium, OFL). Cinzel para marca/títulos. Sem Arial/SystemFont/fallback do sistema.
-- Preservar identidades/silhuetas/cores dos quinze monstros. Toda criatura precisa idle, andar/voar, ataque, dano, cast, blink, aparição e morte. Proibido andar sentada. Espécie que senta deve levantar antes de locomover e sentar só ao parar.
+- Preservar identidades/silhuetas/cores dos monstros. Exceção explícita solicitada em15/10: Fagulim foi redesenhado como monstro de brasa/folhagem, com nova referência assets/ember-taskmon.png; não voltar à raposa comum. Toda criatura precisa idle, andar/voar, ataque, dano, cast, blink, aparição e morte. Proibido andar sentada. Espécie que senta deve levantar antes de locomover e sentar só ao parar.
 - Passadas ligadas a travel_speed e world_speed_multiplier; acelerar mapa deve acelerar caminhada sem aplicar fator duas vezes. Clones têm fase/efeito por exemplar.
 - Não mostrar cards de equipe durante expedição; usar nome, nível e olho para abrir carta detalhada. Atributos só na carta, por ícones; categoria com ícone + Atacante/Tank/Suporte.
 - Itens reutilizam os mesmos assets. Moeda=coin.svg; XP=xp.svg; eye.svg inspeção. Orb é Pérola, nunca substituir moeda por orb.
@@ -92,3 +102,7 @@ Depois da integração, rerodar testes relevantes e capturas do jogo real, depoi
 Local original: `D:\APPS\game`. VolumeDocker `game_brumora-data`, banco em `/app/server/data` no container; preservar. Nunca executar `docker compose down -v`. Cliente usa `%APPDATA%/Godot/app_userdata/Brumora — MVP/connection.cfg`; contém chaves e não foi enviado. Backups estão fora do repo, em AppData/Local/Brumora/backups. A cloud terá ambiente/dados de teste próprios; não deduzir que progresso real foi migrado.
 
 Capturas/ZIP/logs/caches ficam fora do versionamento. Memória persistente é documentação no repositório; agentes e memória transitória de conversa não viajam automaticamente. A automação de computador foi interrompida por Esc do usuário; não retomar cliques sem nova solicitação em sessão apropriada.
+
+## Sentar/levantar — estado honesto desta entrega
+
+Usuário perguntou se seria possível e também perguntou sobre Blender (foi respondido sem migrar o pipeline). Foi implementado um protótipo sit/rise, com passadas bloqueadas até ficar em pé e gate local do cenário. Revisão gráfica mostrou agachamento, ainda insuficiente como sentar natural. **Auto-sentar está desativado em produção** e protegido por seated_pose_approved no metadata; não ativar por existir teste técnico. Próximo passo artístico: torso/quadril sentado ou subrig de coluna, revisar transições e contato. Não anunciar sit/rise como animações finais.

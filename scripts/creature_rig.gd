@@ -24,6 +24,15 @@ var _head_regions: Dictionary = {}
 var _head_frame = -1
 var support_targets: Dictionary = {}
 var _previous_state = 'idle'
+# Posture is separate from the gait: a seated fox must finish rising before
+# any foot starts a walking cycle. Other species keep their existing anatomy.
+var sit_blend = 0.0
+var _sit_progress = 0.0
+var _sit_target = 0.0
+var _posture_resume_state = 'idle'
+var _allow_sit = false
+var _auto_sitting = false
+var _idle_age = 0.0
 
 func configure(id: String, texture: Texture2D, config: Dictionary = {}) -> void:
  species_id = id
@@ -45,7 +54,8 @@ func configure(id: String, texture: Texture2D, config: Dictionary = {}) -> void:
  for index in range(4):
   var hip = _v(metadata.hips[index])
   var foot = _v(metadata.feet[index])
-  var knee = hip.lerp(foot,0.52) + Vector2(-7 if index % 2 == 0 else (-26 if id == 'ember' else 10),0)
+  var knee_offset = float(metadata.get('knee_offsets',[-7, -26 if id == 'ember' else 10, -7, -26 if id == 'ember' else 10])[index])
+  var knee = hip.lerp(foot,0.52) + Vector2(knee_offset,0)
   _bone('upper%d'%index,'body',hip)
   _bone('lower%d'%index,'upper%d'%index,knee)
  # Back-to-front ordering, independent chains prevent cross-limb influence.
@@ -60,7 +70,7 @@ func configure(id: String, texture: Texture2D, config: Dictionary = {}) -> void:
   var ls = _v(metadata.lower_size[index])
   _part('upper%d'%index,4 if index == 0 else 6,Rect2(hip-Vector2(us.x*.5,8),us),'upper%d'%index,'lower%d'%index,-1)
   var foot = _v(metadata.feet[index])
-  var contact_x = [0.69,0.80][index] if id == 'ember' else 0.55
+  var contact_x = float(metadata.get('lower_contact_x',[0.69,0.80] if id == 'ember' else [0.55,0.55])[index])
   var lower_rect = Rect2(Vector2(foot.x-ls.x*contact_x,knee.y-18),Vector2(ls.x,foot.y-knee.y+18))
   if id != 'ember': lower_rect = Rect2(knee-Vector2(ls.x*.48,10),ls)
   _part('lower%d'%index,5 if index == 0 else 7,lower_rect,'lower%d'%index,'',-2)
@@ -98,11 +108,6 @@ func _region(index: int) -> Rect2:
   var row = index/4
   rect.position.y = int(edges[row])
   rect.size.y = int(edges[row+1])-rect.position.y
- if species_id == 'ember' and index in [1,3,10,11]:
-  rect.position.x += 18
-  rect.size.x -= 18
- if species_id == 'ember' and index in [4,5,6,7]:
-  rect.size.y = 255
  if metadata.has('source_rects') and metadata.source_rects.has(str(index)):
   rect = Rect2i(_rect(metadata.source_rects[str(index)]))
  var bounds = Rect2i()
@@ -164,6 +169,29 @@ func _part(key: String, frame: int, destination: Rect2, primary: String, seconda
 
 func set_motion(animation: Dictionary) -> void:
  var next = str(animation.get('state','idle'))
+ # Current standing torso can crouch safely but does not yet form a natural
+ # seated haunch. Explicit sit/rise are available for art review; automatic
+ # production sitting requires the species' seated artwork to be approved.
+ _allow_sit = bool(animation.get('allow_sit',false)) and bool(metadata.get('seated_pose_approved',false))
+ if species_id == 'ember':
+  # Restored combat has no approach interval: authoritative impacts must not
+  # be delayed by a cosmetic posture. Normal encounters rise during approach.
+  if bool(animation.get('combat',false)) and next != 'locomotion':
+   _sit_progress = 0.0
+   sit_blend = 0.0
+   _auto_sitting = false
+   _allow_sit = false
+  if next != 'idle': _idle_age = 0.0
+  if next == 'idle' and _auto_sitting and _allow_sit: next = 'sit'
+  elif next != 'sit': _auto_sitting = false
+  if next == 'sit':
+   _sit_target = 1.0
+  else:
+   _sit_target = 0.0
+   if next == 'rise': next = 'idle'
+   if _sit_progress > 0.0 and next != 'death':
+    _posture_resume_state = next
+    next = 'rise'
  if next != state:
   _previous_state = state
   state = next
@@ -173,13 +201,28 @@ func set_motion(animation: Dictionary) -> void:
  speed = float(animation.get('ground_speed_local',world_speed))
  speed_factor = maxf(0.01,float(animation.get('speed_factor',absf(world_speed)/15.36)))
  action = float(animation.get('action',0.0))
+ if state == 'rise': return # event ages start after the posture transition
  if animation.has('age'): state_age = maxf(0.0,float(animation.age))
  elif animation.has('progress') and state in ['attack','cast','hurt','appear','death']:
   state_age = clampf(float(animation.progress),0.0,1.0)*(.65 if state == 'death' else .55)
 func advance(delta: float) -> void:
  clock += delta
  state_age += delta
- var moving = state == 'locomotion'
+ if species_id == 'ember':
+  if state == 'idle' and _allow_sit:
+   _idle_age += delta
+   if _idle_age >= float(metadata.get('sit_idle_delay',4.0)):
+    _auto_sitting = true
+    _sit_target = 1.0
+    state = 'sit'
+    state_age = 0.0
+  var duration = float(metadata.get('sit_duration',.70) if _sit_target > _sit_progress else metadata.get('rise_duration',.55))
+  _sit_progress = move_toward(_sit_progress,_sit_target,delta/maxf(.1,duration))
+  sit_blend = smoothstep(0.0,1.0,_sit_progress)
+  if state == 'rise' and is_zero_approx(_sit_progress):
+   state = _posture_resume_state
+   state_age = 0.0
+ var moving = state == 'locomotion' and is_zero_approx(_sit_progress)
  walk_blend = move_toward(walk_blend,1.0 if moving else 0.0,delta*5.0)
  var cadence: float = float(metadata.get('cadence',0.9))
  phase += delta*cadence*speed_factor*TAU
@@ -188,6 +231,9 @@ func advance(delta: float) -> void:
  var body: Bone2D = bones.body
  body.position = rest_points.body + Vector2(0,idle*.7*(1.0-walk_blend)-absf(sin(phase))*1.2*walk_blend)
  body.rotation = sin(clock*1.1+seed)*.004
+ if species_id == 'ember':
+  body.position += Vector2(-12.0,36.0)*sit_blend
+  body.rotation -= .19*sit_blend
  var attack = 0.0
  if state == 'attack':
   if state_age < .16: attack = -sin(state_age/.16*PI*.5)*.32
@@ -208,7 +254,9 @@ func advance(delta: float) -> void:
  for index in range(4):
   var foot = _v(metadata.feet[index])
   var leg_phase = fposmod(phase + [0.0,PI,PI*.85,PI*1.85][index]+seed*.017,TAU)/TAU
-  var stride = absf(speed)/maxf(.01,cadence*speed_factor)*.64
+  # Sign follows relative ground motion; approaching actors can walk against
+  # camera travel, while cadence remains a positive frequency.
+  var stride = speed/maxf(.01,cadence*speed_factor)*.64
   var offset_x: float
   var lift = 0.0
   if leg_phase < .64:
@@ -218,6 +266,10 @@ func advance(delta: float) -> void:
    offset_x = lerpf(-stride*.5,stride*.5,smoothstep(0.0,1.0,swing))
    lift = sin(swing*PI)*5.0
   foot += Vector2(offset_x*walk_blend,-lift*walk_blend)
+  if species_id == 'ember':
+   # Forefeet stay planted; folded hind feet tuck toward the haunches. These
+   # are articulated poses from the same authored parts, not seated PNGs.
+   if index % 2 == 1: foot.x += 24.0*sit_blend
   support_targets[index] = foot
   if archetype in ['flyer','floater','serpent'] or (archetype == 'biped' and index % 2 == 0):
    bones['upper%d'%index].rotation = sin(clock*2.2+seed+index)*.04 + attack*.18
@@ -225,9 +277,9 @@ func advance(delta: float) -> void:
   else:
    _solve_leg(index,foot)
  var head: Bone2D = bones.head
- head.rotation = idle*.008-attack*.075
+ head.rotation = idle*.008-attack*.075+.14*sit_blend
  var tail: Bone2D = bones.tail
- tail.rotation = sin(clock*2.1+seed*.6)*.028 + sin(phase)*.012*walk_blend
+ tail.rotation = sin(clock*2.1+seed*.6)*.028 + sin(phase)*.012*walk_blend-.12*sit_blend
  if archetype == 'flyer':
   var flap = sin(clock*5.5+seed*.37)
   tail.rotation = flap*.17

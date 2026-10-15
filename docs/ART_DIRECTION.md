@@ -53,3 +53,7 @@ TaskMon-Interface.ttf (Alegreya Sans SC Medium licenciada) é a fonte ativa de c
 
 ## Crítica recebida e revisão botânica de composição
 O usuário rejeitou as versões anteriores da ficha, resumo e emblema GS por parecerem caixas básicas com texto sobre fundo. Essa rejeição não equivale a aprovação da versão seguinte. A nova composição usa hero ilustrado com moldura curva de folhas, atributos em quatro medalhões flutuantes, GS com emblema botânico sem degraus pixelados, e leitura compacta em duas colunas. Resumos reaproveitam os mesmos medalhões e molduras; a barra Descoberta usa arte vetorial de vinha e tecido acetinado com valor contínuo fornecido pelo cliente. Conferir capturas reais e aguardar avaliação do usuário; não inflar notas nem declarar qualidade final sem evidência.
+
+## Atualização — Fagulim redesenhado por solicitação do usuário
+
+Em 15/10/2026 o usuário rejeitou a aparência de raposa comum. Nova identidade: monstro de brasa e folhagem, corpo quadrúpede compacto, pelos âmbar/creme, placas de folha jade e carvão com veios luminosos, orelhas em folha e cauda de semente flamejante. Referência `assets/ember-taskmon.png`, partes `assets/rigs/ember-parts.png`; não retornar à raposa natural dos atlas anteriores. O desenho ainda aguarda aprovação artística do usuário. Rigs de partes autorais agora são o backend ativo do renderer; usar poses e efeitos específicos onde o rig procedural não entrega expressão suficiente.

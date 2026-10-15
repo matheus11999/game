@@ -47,3 +47,9 @@ As quinze espécies possuem folhas próprias `assets/rigs/{id}-parts.png`. Elas 
 Montagem nativa: `scripts/creature_rig.gd`, `scripts/creature_rig_pool.gd`. Coordenadas/pivôs por espécie em `rig-metadata.json` (Fagulim), `rig-species.json` (demais iniciais e Espinbroto), `rig-enemies.json` (oito inimigos restantes). O layout lógico é 4×3, mas dimensões e limites de partes variam; reutilizar as janelas explícitas do metadata. Não assumir células quadradas nem produzir versões alternativas do mesmo monstro sem consultar esta memória.
 
 Esta decisão substitui as recomendações anteriores de rig sobre o PNG completo. A existência da folha e dos ossos não significa aprovação artística: verificar encaixe, volume, passos e transições no Godot.
+
+## Substituição solicitada: Fagulim monstro de brasa e folhas (15/10/2026)
+
+O usuário rejeitou a raposa comum e solicitou seu redesenho. **Nova referência canônica de Fagulim: `assets/ember-taskmon.png`**, monstro quadrúpede âmbar/creme, placas de folhas jade/carbonizadas com veios incandescentes, orelhas em folha e cauda enrolada de semente flamejante. `assets/rigs/ember-parts.png` foi redesenhado a partir desse conceito com as doze partes e quatro expressões da cabeça. Manter os mesmos materiais e face entre retratos e animação; não usar mais o Fagulim comum do atlas em produção. A aprovação artística final depende da avaliação do usuário.
+
+Esta seção substitui as instruções anteriores sobre a identidade de Fagulim e o uso de ember-locomotion-v2.png/ember-attack.png. Esses arquivos e o Fagulim no atlas antigo são referências históricas; não reativar seu caminho de animação. As outras catorze espécies preservam identidade. Backend ativo: creature_rig_pool.gd + creature_rig.gd, integrado ao main.gd. Orientação da arte vem de faces_left no metadata, não do atlas legado.
