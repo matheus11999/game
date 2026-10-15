@@ -1,0 +1,7 @@
+.godot/
+server/data/
+node_modules/
+releases/
+*.log
+*.tmp
+.DS_Store

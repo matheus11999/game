@@ -1,0 +1,55 @@
+{
+  "version": 1,
+  "distance_unit": "world_pixels",
+  "note": "Waypoints are visual route milestones; rewards and progression remain server-authoritative.",
+  "regions": [
+    {
+      "id": 0,
+      "name": "Prado das Lanternas",
+      "theme": "Bosque crepuscular sobre ilhas suspensas, caminhos cobertos de musgo, lanternas de seiva e antigos aquedutos.",
+      "travel_length": 3600,
+      "panorama_row": 0,
+      "palette": ["#111e30", "#2b5361", "#83dfba", "#f2cd85"],
+      "layers": ["céu âmbar e névoa", "copas distantes", "aquedutos suspensos", "trilha de raízes", "gramíneas e vagalumes"],
+      "waypoints": [
+        {"distance": 0, "name": "Clareira da Primeira Brasa", "landmark": "Acampamento em torno de uma lanterna de seiva"},
+        {"distance": 720, "name": "Passagem dos Arcos", "landmark": "Aqueduto antigo coberto de samambaias"},
+        {"distance": 1550, "name": "Pomar Suspenso", "landmark": "Árvores de frutos âmbar e pontes de raízes"},
+        {"distance": 2600, "name": "Jardim do Guardião", "landmark": "Pedras memoriais entre flores luminosas"},
+        {"distance": 3600, "name": "Árvore das Mil Lanternas", "landmark": "Clareira do chefe regional"}
+      ]
+    },
+    {
+      "id": 1,
+      "name": "Costa de Vidro",
+      "theme": "Marés turquesa atravessam falésias de vidro, escadas costeiras e faróis prismáticos sob nuvens azul-marinho.",
+      "travel_length": 4800,
+      "panorama_row": 1,
+      "palette": ["#111b35", "#315c75", "#78ced5", "#c5a5ef"],
+      "layers": ["céu de maré", "ilhas longínquas", "falésias translúcidas", "caminho de areia azul", "ondas e cristais"],
+      "waypoints": [
+        {"distance": 0, "name": "Ancoradouro da Névoa", "landmark": "Barcos de exploração presos a pilares de pedra"},
+        {"distance": 960, "name": "Escadaria das Marés", "landmark": "Degraus esculpidos na costa"},
+        {"distance": 2050, "name": "Enseada Prismática", "landmark": "Arcos de vidro acima de poças luminosas"},
+        {"distance": 3420, "name": "Farol Adormecido", "landmark": "Torre prismática e pontes de coral"},
+        {"distance": 4800, "name": "Coração da Ressaca", "landmark": "Arena costeira do chefe"}
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Ruínas do Luar",
+      "theme": "Observatórios abandonados, portais lunares e jardins de cristal lavanda flutuam sobre um abismo silencioso.",
+      "travel_length": 6000,
+      "panorama_row": 2,
+      "palette": ["#17172e", "#454568", "#c5a5ef", "#f2cd85"],
+      "layers": ["céu estrelado", "anéis lunares distantes", "torres quebradas", "calçada de runas", "cristais e poeira astral"],
+      "waypoints": [
+        {"distance": 0, "name": "Pórtico do Eclipse", "landmark": "Portal de pedra com runas lavanda"},
+        {"distance": 1250, "name": "Galeria das Constelações", "landmark": "Colunata quebrada acima do abismo"},
+        {"distance": 2600, "name": "Jardim da Lua Fria", "landmark": "Cristais brotando entre mosaicos antigos"},
+        {"distance": 4250, "name": "Observatório Silente", "landmark": "Astrolábio dourado cercado de ruínas"},
+        {"distance": 6000, "name": "Trono do Véu", "landmark": "Arena lunar do chefe final do MVP"}
+      ]
+    }
+  ]
+}

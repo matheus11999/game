@@ -1,0 +1,13 @@
+.git
+.godot
+**/node_modules
+server/data
+releases
+docs
+tools
+assets/*.png
+assets/*.wav
+assets/*.svg
+assets/fonts
+**/*.log
+.env*

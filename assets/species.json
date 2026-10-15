@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "species": [
+    {"id":"ember","name":"Fagulim","role":"Atacante","element":"Brasa","description":"Uma raposa que guarda pequenas brasas na cauda.","color":"efaa64","sprite":0,"starter":true,"base":{"hp":82,"attack":28,"defense":11,"speed":22},"skill":{"name":"Salto de brasa","kind":"strike","power":1.85,"cooldown":3,"description":"Golpe forte em um inimigo."}},
+    {"id":"moss","name":"Musgudo","role":"Tanque","element":"Bosque","description":"Seu jardim nas costas protege toda a caravana.","color":"7fd5a5","sprite":1,"starter":true,"base":{"hp":132,"attack":17,"defense":23,"speed":9},"skill":{"name":"Muralha viva","kind":"shield","power":0.24,"cooldown":3,"description":"Concede escudos a toda a equipe."}},
+    {"id":"luna","name":"Lunélia","role":"Suporte","element":"Lua","description":"Uma mariposa que transforma luar em cuidado.","color":"c5a5ef","sprite":2,"starter":true,"base":{"hp":94,"attack":18,"defense":13,"speed":19},"skill":{"name":"Pó de luar","kind":"heal","power":0.34,"cooldown":3,"description":"Cura o aliado com menos vida proporcional."}},
+    {"id":"tide","name":"Marulito","role":"Atacante","element":"Maré","description":"Um pequeno explorador das poças luminosas.","color":"72cddd","sprite":3,"starter":false,"base":{"hp":92,"attack":25,"defense":14,"speed":24},"skill":{"name":"Onda curta","kind":"strike","power":1.7,"cooldown":2,"description":"Ataque rápido em um inimigo."}},
+    {"id":"crag","name":"Pedrume","role":"Tanque","element":"Cristal","description":"Um guardião de pedras com um coração de ametista.","color":"b697d0","sprite":4,"starter":false,"base":{"hp":145,"attack":20,"defense":25,"speed":7},"skill":{"name":"Abrigo mineral","kind":"shield","power":0.28,"cooldown":4,"description":"Protege a equipe com cristais."}},
+    {"id":"cloud","name":"Nimbico","role":"Suporte","element":"Vento","description":"Uma coruja que leva bons ventos aos seus amigos.","color":"f0dfae","sprite":5,"starter":false,"base":{"hp":102,"attack":19,"defense":16,"speed":20},"skill":{"name":"Sopro sereno","kind":"heal","power":0.3,"cooldown":2,"description":"Restaura a vida do aliado mais ferido."}}
+  ],
+  "regions": [
+    {"id":0,"name":"Prado das Lanternas","subtitle":"Bosque • dificuldade suave","level":1,"boss_level":3,"gold":3,"xp":5,"pool":["ember","moss","luna"],"boss":"Guardião do Prado","color":"7fd5a5"},
+    {"id":1,"name":"Costa de Vidro","subtitle":"Maré • dificuldade média","level":4,"boss_level":6,"gold":5,"xp":8,"pool":["tide","luna","ember"],"boss":"Vigia das Marés","color":"72cddd"},
+    {"id":2,"name":"Ruínas do Luar","subtitle":"Cristal • dificuldade alta","level":7,"boss_level":10,"gold":8,"xp":12,"pool":["crag","cloud","moss"],"boss":"Sentinela Lunar","color":"c5a5ef"}
+  ],
+  "rarities": [
+    {"id":"common","name":"Comum","weight":70,"bonus":1.0,"color":"a4b6cb"},
+    {"id":"uncommon","name":"Incomum","weight":22,"bonus":1.03,"color":"80dfbe"},
+    {"id":"rare","name":"Rara","weight":7,"bonus":1.06,"color":"86b9f4"},
+    {"id":"epic","name":"Épica","weight":1,"bonus":1.09,"color":"d4a2f2"}
+  ]
+}

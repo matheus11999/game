@@ -1,0 +1,19 @@
+services:
+  server:
+    build:
+      context: .
+      target: runtime
+    ports:
+      - "127.0.0.1:8787:8787"
+    volumes:
+      - brumora-data:/app/server/data
+    restart: unless-stopped
+
+  test:
+    profiles: ["tools"]
+    build:
+      context: .
+      target: test
+
+volumes:
+  brumora-data:

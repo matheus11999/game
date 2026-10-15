@@ -1,0 +1,230 @@
+{
+  "version": 1,
+  "species": [
+    {
+      "id": "thornbud",
+      "name": "Espinbroto",
+      "role": "Atacante",
+      "element": "Bosque",
+      "description": "Um broto arisco que lança espinhos de âmbar.",
+      "color": "b3d476",
+      "sprite": 0,
+      "sprite_atlas": "enemy",
+      "starter": false,
+      "boss": false,
+      "base": {
+        "hp": 48,
+        "attack": 12,
+        "defense": 6,
+        "speed": 12
+      },
+      "skill": {
+        "name": "Rajada de espinhos",
+        "kind": "strike",
+        "power": 1.3,
+        "cooldown": 3,
+        "description": "Projeta espinhos contra um alvo."
+      }
+    },
+    {
+      "id": "pebblebug",
+      "name": "Cascalhito",
+      "role": "Tanque",
+      "element": "Bosque",
+      "description": "Um besouro de seixos coberto de musgo e raízes.",
+      "color": "91bba0",
+      "sprite": 1,
+      "sprite_atlas": "enemy",
+      "starter": false,
+      "boss": false,
+      "base": {
+        "hp": 56,
+        "attack": 11,
+        "defense": 9,
+        "speed": 7
+      },
+      "skill": {
+        "name": "Casca de seixos",
+        "kind": "shield",
+        "power": 0.1,
+        "cooldown": 4,
+        "description": "Protege os aliados com uma casca mineral."
+      }
+    },
+    {
+      "id": "reefclaw",
+      "name": "Recifero",
+      "role": "Atacante",
+      "element": "Maré",
+      "description": "Um crustáceo com pinças de coral luminoso.",
+      "color": "eead94",
+      "sprite": 2,
+      "sprite_atlas": "enemy",
+      "starter": false,
+      "boss": false,
+      "base": {
+        "hp": 78,
+        "attack": 23,
+        "defense": 12,
+        "speed": 20
+      },
+      "skill": {
+        "name": "Pinça coralina",
+        "kind": "strike",
+        "power": 1.55,
+        "cooldown": 3,
+        "description": "Fecha as pinças de coral sobre um adversário."
+      }
+    },
+    {
+      "id": "tidejelly",
+      "name": "Gelumar",
+      "role": "Suporte",
+      "element": "Maré",
+      "description": "Uma água-viva turquesa que carrega gotas de cura.",
+      "color": "81dce0",
+      "sprite": 3,
+      "sprite_atlas": "enemy",
+      "starter": false,
+      "boss": false,
+      "base": {
+        "hp": 80,
+        "attack": 16,
+        "defense": 10,
+        "speed": 17
+      },
+      "skill": {
+        "name": "Pulso da maré",
+        "kind": "heal",
+        "power": 0.23,
+        "cooldown": 3,
+        "description": "Restaura a vida do aliado mais ferido."
+      }
+    },
+    {
+      "id": "runewisp",
+      "name": "Runíspio",
+      "role": "Suporte",
+      "element": "Lua",
+      "description": "Um espírito ancestral envolto em runas flutuantes.",
+      "color": "c0acec",
+      "sprite": 4,
+      "sprite_atlas": "enemy",
+      "starter": false,
+      "boss": false,
+      "base": {
+        "hp": 94,
+        "attack": 20,
+        "defense": 14,
+        "speed": 23
+      },
+      "skill": {
+        "name": "Luz rúnica",
+        "kind": "heal",
+        "power": 0.26,
+        "cooldown": 3,
+        "description": "Concentra luz restauradora sobre um aliado."
+      }
+    },
+    {
+      "id": "shardguard",
+      "name": "Estilhaço",
+      "role": "Tanque",
+      "element": "Cristal",
+      "description": "Um sentinela de fragmentos que protege as ruínas.",
+      "color": "a6a4de",
+      "sprite": 5,
+      "sprite_atlas": "enemy",
+      "starter": false,
+      "boss": false,
+      "base": {
+        "hp": 125,
+        "attack": 21,
+        "defense": 22,
+        "speed": 10
+      },
+      "skill": {
+        "name": "Prisma guardião",
+        "kind": "shield",
+        "power": 0.2,
+        "cooldown": 4,
+        "description": "Forma barreiras prismáticas em torno da equipe."
+      }
+    },
+    {
+      "id": "rootelder",
+      "name": "Raiz Anciã",
+      "role": "Tanque",
+      "element": "Bosque",
+      "description": "Um guardião ancestral de madeira, com lanternas entre os galhos.",
+      "color": "92c894",
+      "sprite": 6,
+      "sprite_atlas": "enemy",
+      "starter": false,
+      "boss": true,
+      "base": {
+        "hp": 172,
+        "attack": 24,
+        "defense": 23,
+        "speed": 8
+      },
+      "skill": {
+        "name": "Círculo de raízes",
+        "kind": "shield",
+        "power": 0.22,
+        "cooldown": 4,
+        "description": "Ergue raízes protetoras ao redor dos companheiros."
+      }
+    },
+    {
+      "id": "abyssmaw",
+      "name": "Bocarra Abissal",
+      "role": "Atacante",
+      "element": "Maré",
+      "description": "Um predador de coral e conchas com mandíbula bioluminescente.",
+      "color": "74c5da",
+      "sprite": 7,
+      "sprite_atlas": "enemy",
+      "starter": false,
+      "boss": true,
+      "base": {
+        "hp": 158,
+        "attack": 34,
+        "defense": 19,
+        "speed": 18
+      },
+      "skill": {
+        "name": "Ruptura abissal",
+        "kind": "strike",
+        "power": 1.8,
+        "cooldown": 3,
+        "description": "Desfere uma mordida carregada de energia oceânica."
+      }
+    },
+    {
+      "id": "moonwarden",
+      "name": "Custódio Lunar",
+      "role": "Tanque",
+      "element": "Lua",
+      "description": "Um guardião de pedra e cristal orbitado por fragmentos do luar.",
+      "color": "c2acf0",
+      "sprite": 8,
+      "sprite_atlas": "enemy",
+      "starter": false,
+      "boss": true,
+      "base": {
+        "hp": 194,
+        "attack": 30,
+        "defense": 27,
+        "speed": 12
+      },
+      "skill": {
+        "name": "Égide do eclipse",
+        "kind": "shield",
+        "power": 0.24,
+        "cooldown": 4,
+        "description": "Distribui escudos de luar para sua formação."
+      }
+    }
+  ]
+}

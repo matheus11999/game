@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "duration_seconds": 1.1,
+  "renderer": "res://scripts/combat_effects.gd",
+  "style": "Navy outlined silhouettes, cream sparks, deterministic trails, regional colors",
+  "events": ["attack", "heal", "shield", "hit"],
+  "species": {
+    "ember": "Ember leap and flame starburst",
+    "moss": "Leaf darts and living hexagonal canopy",
+    "luna": "Moon motes and rising healing stars",
+    "tide": "Layered water wave",
+    "crag": "Crystal lance and crystalline barrier",
+    "cloud": "Three rotating wind ribbons",
+    "thornbud": "Triple thorn darts",
+    "pebblebug": "Dust trail and mineral shell",
+    "reefclaw": "Water fang slash",
+    "tidejelly": "Concentric pulse and healing motes",
+    "runewisp": "Violet zigzag bolt",
+    "shardguard": "Crystal wall",
+    "rootelder": "Branching root strike",
+    "abyssmaw": "Oversized abyss wave",
+    "moonwarden": "Golden rune burst"
+  }
+}
