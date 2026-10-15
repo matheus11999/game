@@ -1,0 +1,648 @@
+{
+  "version": 1,
+  "game": "TaskMon",
+  "instruction": "Consult docs/ASSET_REGISTRY.md before generating images. Reuse stable material icons and species identities. Procedural-world experiment is disabled.",
+  "canonical": {
+    "ember-locomotion-v2.png": "Fagulim canonical 4x3 RGBA sheet: upright, eight walk phases, rise/sit, blink, hurt",
+    "ember-attack.png": "Fagulim four authored attack poses, 2x2 RGBA sheet",
+    "creatures-taskmon.png": "Six collection species, approved 3x2 RGBA atlas",
+    "enemies.png": "Nine enemy species, original RGBA atlas",
+    "world-forest.png": "Lantern Forest high-resolution illustrated background",
+    "world-coast.png": "Glass Coast high-resolution illustrated background",
+    "world-ruins.png": "Moon Ruins high-resolution illustrated background",
+    "ground-taskmon.png": "Detailed terrain, three biome strips"
+  },
+  "files": [
+    {
+      "path": "assets/animations/ember-attack.png",
+      "sha256": "4462246b9d1cf270c6060395fedb7459629f0331e781c95b9af82d4708f01ab5",
+      "bytes": 1383755,
+      "width": 1254,
+      "height": 1254,
+      "role": "Fagulim four authored attack poses, 2x2 RGBA sheet"
+    },
+    {
+      "path": "assets/animations/ember-locomotion-v2.png",
+      "sha256": "b407fbe03d8069220557915dd2ac483c40db7579c3d07c682cc00fc6e1535de5",
+      "bytes": 2330884,
+      "width": 1536,
+      "height": 1024,
+      "role": "Fagulim canonical 4x3 RGBA sheet: upright, eight walk phases, rise/sit, blink, hurt"
+    },
+    {
+      "path": "assets/animations/ember-locomotion.png",
+      "sha256": "cb3afb1a634f6f91b1993ea8985943ae500de44874f894e46ef2d5027b38894c",
+      "bytes": 2140140,
+      "width": 1536,
+      "height": 1024
+    },
+    {
+      "path": "assets/audio/abyssmaw_attack.wav",
+      "sha256": "9677580a5dc6b695dc90cf3f3ef81888a9a1835d1fb6516dbc74b804b82e7d0e",
+      "bytes": 14156
+    },
+    {
+      "path": "assets/audio/abyssmaw_impact.wav",
+      "sha256": "d03565d89387f4557d1e827662aa74f7aefaa071a24aff25c412857734e4376a",
+      "bytes": 7542
+    },
+    {
+      "path": "assets/audio/abyssmaw_skill.wav",
+      "sha256": "104239e18c73833aa5e2a66927dc5b7bff0a307c20ef205dec5e1e50a93f7155",
+      "bytes": 31796
+    },
+    {
+      "path": "assets/audio/cloud_attack.wav",
+      "sha256": "e80a8b8bbdbed4e74d30ace79b7fbd26eeb4c88d99c9c1be975fd3e2032cbc6b",
+      "bytes": 14156
+    },
+    {
+      "path": "assets/audio/cloud_impact.wav",
+      "sha256": "434f206c4ba213f857d0040ee91bc45c3eb30cf8cbfaf21190fb19629f549734",
+      "bytes": 7542
+    },
+    {
+      "path": "assets/audio/cloud_skill.wav",
+      "sha256": "20f05751274d1933bf9df788e06c710f619f0a890400c661570a02e81cf11fd6",
+      "bytes": 31796
+    },
+    {
+      "path": "assets/audio/crag_attack.wav",
+      "sha256": "55066119dfae4ca9cf0091812e94289e35f6453a26334b1e13d70b90d29e2a2b",
+      "bytes": 14156
+    },
+    {
+      "path": "assets/audio/crag_impact.wav",
+      "sha256": "12536470286d53667fe692bd274bc71f5e3ef74205c9ea58d61c0e567518732b",
+      "bytes": 7542
+    },
+    {
+      "path": "assets/audio/crag_skill.wav",
+      "sha256": "8444d5568d218054db9043720ab5b40b88f940fa8fd02b4535a347a5c85b4802",
+      "bytes": 31796
+    },
+    {
+      "path": "assets/audio/ember_attack.wav",
+      "sha256": "2a8e54127a3b2caeccdb76cba64396128c2446872ff0acbf0d961b73675e25df",
+      "bytes": 14156
+    },
+    {
+      "path": "assets/audio/ember_impact.wav",
+      "sha256": "d9b8742f5b444a2be9d8c0524412b7e3cdd4ed020d89801e73ac19313eb12292",
+      "bytes": 7542
+    },
+    {
+      "path": "assets/audio/ember_skill.wav",
+      "sha256": "38558488393888da19a366ede875425cb1adc340a61f3ecb740be271417de218",
+      "bytes": 31796
+    },
+    {
+      "path": "assets/audio/luna_attack.wav",
+      "sha256": "10ad1c6985f99a3d4eafe7b8110c3cb2ba466967586f19c4c54cdc3a81007c21",
+      "bytes": 14156
+    },
+    {
+      "path": "assets/audio/luna_impact.wav",
+      "sha256": "0d62284cfb01659eae6022d18ec5139c3daa6eb7308cee920f6f03a909e674cf",
+      "bytes": 7542
+    },
+    {
+      "path": "assets/audio/luna_skill.wav",
+      "sha256": "1dad32981bf872a6f44f25792ddd85b59d11a75100a82f6c0c2b328658590e4f",
+      "bytes": 31796
+    },
+    {
+      "path": "assets/audio/moonwarden_attack.wav",
+      "sha256": "78f04ca09a44973742616089cf230151d976446f2d684901ba492a708da4a61f",
+      "bytes": 14156
+    },
+    {
+      "path": "assets/audio/moonwarden_impact.wav",
+      "sha256": "1cd7bcbcb202b5525758058393f0d6fb1d9e6bfcf30683239699f6d195f2355f",
+      "bytes": 7542
+    },
+    {
+      "path": "assets/audio/moonwarden_skill.wav",
+      "sha256": "9ed37df52970bc05770ecb6edb219311ff7d908ea2e58cf1e6b0d6b10f2aca85",
+      "bytes": 31796
+    },
+    {
+      "path": "assets/audio/moss_attack.wav",
+      "sha256": "dde07e9f4f624dec358f4777dbb566a4543ce0f7af9d90aaf34c266e78e5008d",
+      "bytes": 14156
+    },
+    {
+      "path": "assets/audio/moss_impact.wav",
+      "sha256": "5f37c001ff1cb3919db3eb9931308746c3156efec763dcb616fc5468e95565be",
+      "bytes": 7542
+    },
+    {
+      "path": "assets/audio/moss_skill.wav",
+      "sha256": "333effcf8628a4ae2ec6f2dec624ff1f1b8ffde6fba6c4a11c176ac690943679",
+      "bytes": 31796
+    },
+    {
+      "path": "assets/audio/pebblebug_attack.wav",
+      "sha256": "77847d1938acb47136e39c823e1d7f2e6d40a262d9e9ba635d47f180afc9c6ba",
+      "bytes": 14156
+    },
+    {
+      "path": "assets/audio/pebblebug_impact.wav",
+      "sha256": "f1d8d4fe3a0b0ed2f7c7f19e82dd5d8c0dc5885bdf7079f9d1769a5ce199895e",
+      "bytes": 7542
+    },
+    {
+      "path": "assets/audio/pebblebug_skill.wav",
+      "sha256": "bec5b4d2365cee8afbc88afd46f4a918bae5a84f40c27f64d26bf87b9c009174",
+      "bytes": 31796
+    },
+    {
+      "path": "assets/audio/reefclaw_attack.wav",
+      "sha256": "6c612b6911774a3a901d25e500e0a7e4c86afaf12710c69ef9e4d910f5ac2fd0",
+      "bytes": 14156
+    },
+    {
+      "path": "assets/audio/reefclaw_impact.wav",
+      "sha256": "99e1a62c07693c6fe39df9c20c036df7946ec2fdbfc6a390f7d5f7c379a58dbf",
+      "bytes": 7542
+    },
+    {
+      "path": "assets/audio/reefclaw_skill.wav",
+      "sha256": "74614a1814d14b924bb23ebc8bd312e7e1c0d8485e330cc33ea713558c9c3989",
+      "bytes": 31796
+    },
+    {
+      "path": "assets/audio/rootelder_attack.wav",
+      "sha256": "7660a1f67a344227ccef348903945d7be8ae6fb9635c055fbba784d0092e088d",
+      "bytes": 14156
+    },
+    {
+      "path": "assets/audio/rootelder_impact.wav",
+      "sha256": "ee7ddbeb226aef7706df8df3bc9b8ba26839ac0ff11b7a16904cb88c565f51ba",
+      "bytes": 7542
+    },
+    {
+      "path": "assets/audio/rootelder_skill.wav",
+      "sha256": "82d4e3b9f87098d116d5b39fb540af425d5508b86e3d8482a5fb9e145c13320d",
+      "bytes": 31796
+    },
+    {
+      "path": "assets/audio/runewisp_attack.wav",
+      "sha256": "f69c552d3a3b9bc9cba07b1ad4417abb42b5f69c88f854be9379fa9b8c33f5ed",
+      "bytes": 14156
+    },
+    {
+      "path": "assets/audio/runewisp_impact.wav",
+      "sha256": "c03bd8970b76294bc280b6e58145673a60b455162718e5d203be02b3500acd99",
+      "bytes": 7542
+    },
+    {
+      "path": "assets/audio/runewisp_skill.wav",
+      "sha256": "a721fb2ad9c9e22e44312463b1ae8c15e184081908373493382b56ed5a96d98f",
+      "bytes": 31796
+    },
+    {
+      "path": "assets/audio/shardguard_attack.wav",
+      "sha256": "050a8960eb269622a468eef0cc794692f3438355f5bdf436a7bd69525417de0f",
+      "bytes": 14156
+    },
+    {
+      "path": "assets/audio/shardguard_impact.wav",
+      "sha256": "62b1b0f4626aa7768e8d54cfb82a715bf802b4a78e9a2db15bb2f0cff9dc6934",
+      "bytes": 7542
+    },
+    {
+      "path": "assets/audio/shardguard_skill.wav",
+      "sha256": "0c08fc7105e02143ae17a370a3d74a7b7a9cc5834af6937c85875268326f1bf1",
+      "bytes": 31796
+    },
+    {
+      "path": "assets/audio/thornbud_attack.wav",
+      "sha256": "831d7d90361aa0a02d0d1116ea0a0a172851a13dcf34f50e984161e5ca5eff8d",
+      "bytes": 14156
+    },
+    {
+      "path": "assets/audio/thornbud_impact.wav",
+      "sha256": "78c6c32718d80f375eeaad9f48bb4ffed136944dba8ebf6f08c8a4c6665e6407",
+      "bytes": 7542
+    },
+    {
+      "path": "assets/audio/thornbud_skill.wav",
+      "sha256": "984af2a1094e79eaca69635118e6b035267f9a335ebe78da448f4644d9da598b",
+      "bytes": 31796
+    },
+    {
+      "path": "assets/audio/tide_attack.wav",
+      "sha256": "f462200afd2739a9a366153a41a06f8df16aebf8a5add3a99110ef59a9f4944b",
+      "bytes": 14156
+    },
+    {
+      "path": "assets/audio/tide_impact.wav",
+      "sha256": "a1416401f877b4f53283048a3a8f91c93238dc47eeae145ac1051cfa0a5fec68",
+      "bytes": 7542
+    },
+    {
+      "path": "assets/audio/tide_skill.wav",
+      "sha256": "c7717fe29dfc049115e4d973b330e88ad597e8d5cbcba78e57b1eb27016853df",
+      "bytes": 31796
+    },
+    {
+      "path": "assets/audio/tidejelly_attack.wav",
+      "sha256": "aec222580e8b72da4e5c18a51e7152be2d8875c446cfbadf8984aa1430e6bf57",
+      "bytes": 14156
+    },
+    {
+      "path": "assets/audio/tidejelly_impact.wav",
+      "sha256": "297a3bdd5e387c0f9ac5876fe2591be538ea8633ab02518b4c0036833e996a53",
+      "bytes": 7542
+    },
+    {
+      "path": "assets/audio/tidejelly_skill.wav",
+      "sha256": "da197d8ac52b2f33ae3e042dd3caa6f709aabf40e5c0b55f36113beb487f7e81",
+      "bytes": 31796
+    },
+    {
+      "path": "assets/creatures-detailed.png",
+      "sha256": "06e3466766fdf26bd1a8bd290a4d427699c8ec576868de3d60c20e32504fcfe4",
+      "bytes": 2248276,
+      "width": 1536,
+      "height": 1024
+    },
+    {
+      "path": "assets/creatures-taskmon.png",
+      "sha256": "8e71b61d823161dc3e49739c193cd6631ebb723ec9618b5da29410468c1d5ba1",
+      "bytes": 2364745,
+      "width": 1536,
+      "height": 1024,
+      "role": "Six collection species, approved 3x2 RGBA atlas"
+    },
+    {
+      "path": "assets/creatures.png",
+      "sha256": "c6f1919f61e1db143c7ec02838601bc00cb048be7fb5c568d2431b805a80fea0",
+      "bytes": 3620,
+      "width": 192,
+      "height": 128
+    },
+    {
+      "path": "assets/enemies.png",
+      "sha256": "d210e5ff633c1dc1165e8843916100b409ac8d48746f6a77cd14255c89a419a8",
+      "bytes": 2411858,
+      "width": 1254,
+      "height": 1254,
+      "role": "Nine enemy species, original RGBA atlas"
+    },
+    {
+      "path": "assets/fonts/CinzelDecorative.ttf",
+      "sha256": "5b862be329103ad287a10f0a53e27a40e8cc519999253f1a0223e2dc330b10b8",
+      "bytes": 60408
+    },
+    {
+      "path": "assets/fonts/Inter.ttf",
+      "sha256": "29160a80ff49ddcab2c97711247e08b1fab27a484a329ce8b813d820dc559031",
+      "bytes": 876576
+    },
+    {
+      "path": "assets/fonts/PixelifySans.ttf",
+      "sha256": "9ba86cd010a4de309d263ceff8e8044092c9db7efda869620cb9ff1c4389e8a5",
+      "bytes": 79160
+    },
+    {
+      "path": "assets/fonts/TaskMon-Interface.ttf",
+      "sha256": "532c7dc4bc0fe8109d2c5f17829d9985597aacb86e8001023e045d4ee00f356a",
+      "bytes": 266120
+    },
+    {
+      "path": "assets/ground-taskmon.png",
+      "sha256": "4ef14b4f225af1f71ab82df44ad61acf0f2e33cd1cb378ef6343c36b3a5a4690",
+      "bytes": 3483651,
+      "width": 1536,
+      "height": 1024,
+      "role": "Detailed terrain, three biome strips"
+    },
+    {
+      "path": "assets/icon.svg",
+      "sha256": "1ee6f7a414a4ed754fb56696b7e723686e6eff2bb9ceda530a6a196cbf12bc13",
+      "bytes": 359
+    },
+    {
+      "path": "assets/icons/auto.svg",
+      "sha256": "a386068796c9cd5384d990f7f00db5b91db0197c818e0b5808e064879934b7ec",
+      "bytes": 272
+    },
+    {
+      "path": "assets/icons/bag.svg",
+      "sha256": "1ce50470d5b520ddbffc7e2c56b60a50559c543e2783e01047deb960aede3f10",
+      "bytes": 235
+    },
+    {
+      "path": "assets/icons/book.svg",
+      "sha256": "0d48d6c5e421d892affba093d07a0546925f4cba6f8b9a35201e9b7a1ea00cf4",
+      "bytes": 250
+    },
+    {
+      "path": "assets/icons/boot.svg",
+      "sha256": "00eaf806af42ee67ea51e73a60a08d4289ed73be6b3ac67f0e0655d6ae7519b4",
+      "bytes": 228
+    },
+    {
+      "path": "assets/icons/close.svg",
+      "sha256": "d1ca0e1153a161d0a2369e95b4584b1491cad93f35ad556e3ee94d8b7b0a8aea",
+      "bytes": 221
+    },
+    {
+      "path": "assets/icons/coin.svg",
+      "sha256": "d19c1fb9e747d7a0fe223ca772192309b1751ed202b9b23fd451ea3580b24bce",
+      "bytes": 817
+    },
+    {
+      "path": "assets/icons/compact.svg",
+      "sha256": "3c102aefec7807325d3052e04a0536323b6f724725d2e749f68b32e70ffa844e",
+      "bytes": 258
+    },
+    {
+      "path": "assets/icons/core.svg",
+      "sha256": "c1108734a7d454ea3d286360bab47e1d3ae3835743407fd39978e16ea1148160",
+      "bytes": 246
+    },
+    {
+      "path": "assets/icons/crystal.svg",
+      "sha256": "17d039540e9cebe508d8cc190adc8f9f206eb0b92714e0672f99c4068b50bd16",
+      "bytes": 265
+    },
+    {
+      "path": "assets/icons/expand.svg",
+      "sha256": "7eea6eb6102c688b4cbaf68efd5684e61d02437869c0d8a5e448a5f64d00f915",
+      "bytes": 271
+    },
+    {
+      "path": "assets/icons/eye.svg",
+      "sha256": "72ab67aa5eadf8a80acef76ebd3d13b15597570299a7c868f544f1029ecf6298",
+      "bytes": 479
+    },
+    {
+      "path": "assets/icons/heart.svg",
+      "sha256": "1ebe4790e16a553a731d30fc40f7712948030ee183453215792cfcf4a031dda0",
+      "bytes": 244
+    },
+    {
+      "path": "assets/icons/leaf.svg",
+      "sha256": "88c0edc718faa4ed4bff004c4476dbba4e505d4922d6d00e15b5f83087f48681",
+      "bytes": 256
+    },
+    {
+      "path": "assets/icons/orb.svg",
+      "sha256": "1428f033e4a0df5ed6d5a849abde3d6526170d6ee24dc2e374adf1d2c89a60ce",
+      "bytes": 246
+    },
+    {
+      "path": "assets/icons/pause.svg",
+      "sha256": "8552f926b169bdcaf87540a9a9e1a2885c266ad611722dbf0ba7a5ace40df34f",
+      "bytes": 217
+    },
+    {
+      "path": "assets/icons/play.svg",
+      "sha256": "d79ae5d7c42d47b9684206b3d1c64d8057a3c375fbcb52625e5e55eef60b3c95",
+      "bytes": 217
+    },
+    {
+      "path": "assets/icons/settings.svg",
+      "sha256": "5ec04a6e00c468325214c75fb5e1a88e4585609fb4cf053b32dd93a0fb068469",
+      "bytes": 290
+    },
+    {
+      "path": "assets/icons/shield.svg",
+      "sha256": "8025a48f8bb41a39876678bdd62d2d6455e5dc7627920ffaa648324c6001d8c3",
+      "bytes": 251
+    },
+    {
+      "path": "assets/icons/sound.svg",
+      "sha256": "78e98b27a723f5053273289590f5034c4f6019916be0c1613c33ee4c49eac8c8",
+      "bytes": 240
+    },
+    {
+      "path": "assets/icons/spark.svg",
+      "sha256": "39e18481fc66c1e15b4f6d0f07866201af5846834a1c016723d5915488098776",
+      "bytes": 242
+    },
+    {
+      "path": "assets/icons/star.svg",
+      "sha256": "9ec0f6463b420d0a5e7c356e15a7e20a646410653de113b4741eb03fe79a6dd8",
+      "bytes": 247
+    },
+    {
+      "path": "assets/icons/sword.svg",
+      "sha256": "4ae96f5d7af8d9fac593b5bbe765240fbacca449bc7c5e6819ab14149915da74",
+      "bytes": 245
+    },
+    {
+      "path": "assets/icons/trophy.svg",
+      "sha256": "9d7481ad20022c6863a9dcca73c4a7e6ba19b7542d4312ae020d853e761a667c",
+      "bytes": 272
+    },
+    {
+      "path": "assets/icons/upgrade.svg",
+      "sha256": "cdc7c9d33cd52920ad1a0cb7245e66a7cf670fa167af855d79c591b0fbe879c7",
+      "bytes": 231
+    },
+    {
+      "path": "assets/icons/xp.svg",
+      "sha256": "d1ac798bdae71e5c51e10faf01e5818c27cfedeeceeba42c8944ec6c9dfb00bf",
+      "bytes": 685
+    },
+    {
+      "path": "assets/props.png",
+      "sha256": "41963acaf7fd54ca0049feda4fb49ae0a72d81df679bce1bfb1049bfbdf121ec",
+      "bytes": 1140,
+      "width": 192,
+      "height": 48
+    },
+    {
+      "path": "assets/rigs/abyssmaw-parts.png",
+      "sha256": "ad47024e58d47ab5627003a3afd576030365db28d30f2d5f6bb86ed6f56f6519",
+      "bytes": 1718413,
+      "width": 1448,
+      "height": 1086
+    },
+    {
+      "path": "assets/rigs/cloud-parts.png",
+      "sha256": "8cbfa5f0aeb962004c46a78983f18b65e67e981f45162293baa923f56048ae38",
+      "bytes": 1369060,
+      "width": 1448,
+      "height": 1086
+    },
+    {
+      "path": "assets/rigs/crag-parts.png",
+      "sha256": "49c9a86a092b225eb1146e34687befbecfa254b5b9df89392e9a5f254abd8e71",
+      "bytes": 1265632,
+      "width": 1448,
+      "height": 1086
+    },
+    {
+      "path": "assets/rigs/ember-parts.png",
+      "sha256": "f4400c71d7e1e25ed0f71eb4c3497ade21cbc66bbffc5457eea24c72bfb0dff7",
+      "bytes": 1994217,
+      "width": 1536,
+      "height": 1024
+    },
+    {
+      "path": "assets/rigs/luna-parts.png",
+      "sha256": "14eac8f7d7618504c06258197ec304399c2b844d6b7ce118897b65d7cc84e5bc",
+      "bytes": 1315724,
+      "width": 1448,
+      "height": 1086
+    },
+    {
+      "path": "assets/rigs/moonwarden-parts.png",
+      "sha256": "674d2a034a471411d63ff16a3e2f1a60c46ef1f9d75679770f1df7c366f2db68",
+      "bytes": 2089929,
+      "width": 1448,
+      "height": 1086
+    },
+    {
+      "path": "assets/rigs/moss-parts.png",
+      "sha256": "9b2ef496848200e439ad6873dca61c4ccf43d6bb7a159dc8f67272b450c53c43",
+      "bytes": 1066227,
+      "width": 1448,
+      "height": 1086
+    },
+    {
+      "path": "assets/rigs/pebblebug-parts.png",
+      "sha256": "c78b3565fcf1934a0d903f78506ee5ee5f8bcbfae7461eccaa8c50a26d2a4e40",
+      "bytes": 1524145,
+      "width": 1448,
+      "height": 1086
+    },
+    {
+      "path": "assets/rigs/reefclaw-parts.png",
+      "sha256": "a620ef7f6df7bfad6e52855c976e43fcb6694264fc0d123af47504da498bfead",
+      "bytes": 1183267,
+      "width": 1448,
+      "height": 1086
+    },
+    {
+      "path": "assets/rigs/rootelder-parts.png",
+      "sha256": "a42e1b19cb5e8a7243507c28fca9b3887e52a5126b140610ccb4e6b34e2a97fc",
+      "bytes": 2121620,
+      "width": 1448,
+      "height": 1086
+    },
+    {
+      "path": "assets/rigs/runewisp-parts.png",
+      "sha256": "a48b6f36b242476918053fdc38e03c5a01bb54837aa21320ff2fc5e7b315eafc",
+      "bytes": 1041276,
+      "width": 1448,
+      "height": 1086
+    },
+    {
+      "path": "assets/rigs/shardguard-parts.png",
+      "sha256": "de78bb870a69720bff0044b1796500cded22d51a6b8a348cfc5b96554779b520",
+      "bytes": 1750893,
+      "width": 1448,
+      "height": 1086
+    },
+    {
+      "path": "assets/rigs/thornbud-parts.png",
+      "sha256": "6a1555bc6e67fee64ec5ac7dd1b647ea29e02f54f8b5d86ccaada5b51f99cec1",
+      "bytes": 1212931,
+      "width": 1491,
+      "height": 1055
+    },
+    {
+      "path": "assets/rigs/tide-parts.png",
+      "sha256": "c55fd7058fdc1c3ed293b7ef5fcab8881164306003dd497bac8fde001db14f63",
+      "bytes": 1227027,
+      "width": 1448,
+      "height": 1086
+    },
+    {
+      "path": "assets/rigs/tidejelly-parts.png",
+      "sha256": "6388f8f0e281368bb7742f703245335b35531bc51f3c89e32cc74706cf161ccb",
+      "bytes": 1211836,
+      "width": 1448,
+      "height": 1086
+    },
+    {
+      "path": "assets/terrain.png",
+      "sha256": "9fd1d380e698549e37b4ed437c54001138c8f0e109f544bad12d5ed300b25e67",
+      "bytes": 711,
+      "width": 128,
+      "height": 16
+    },
+    {
+      "path": "assets/turn.wav",
+      "sha256": "26371d2a5a4164d560bcc764e6f45e9cc335d9b448708ee1e6eaa2bbbc4e73f2",
+      "bytes": 8864
+    },
+    {
+      "path": "assets/ui/button-blue.svg",
+      "sha256": "d245170246155c406f07a667f400e3fb39ec7da81cd745443fd62ba0805ca915",
+      "bytes": 397
+    },
+    {
+      "path": "assets/ui/button-gold.svg",
+      "sha256": "4e3e6cb8f3e75bdb4a352620880c4ebd6304f4435d16ee6a34d4af6cc2c9b322",
+      "bytes": 397
+    },
+    {
+      "path": "assets/ui/gear-leaf.svg",
+      "sha256": "3928088fd084c1d6cedb2e1ff265778ae4fbfedb3a95e2d3c6c78a5598f85d45",
+      "bytes": 868
+    },
+    {
+      "path": "assets/ui/hero-leaf.svg",
+      "sha256": "40c43c794617e64d4d7e91daf8017b20a4c3287fcb88fd624d281a02c186a58f",
+      "bytes": 943
+    },
+    {
+      "path": "assets/ui/progress-satin.svg",
+      "sha256": "318ee1edd24b18f3b872b35cdd2a163d1fc7ed89140cae48c129f9b4a0761955",
+      "bytes": 693
+    },
+    {
+      "path": "assets/ui/progress-vine.svg",
+      "sha256": "6a22509e1c1c4b96c37401fea7adb71b0b58a2c888da7166cfff187dc1b7f462",
+      "bytes": 620
+    },
+    {
+      "path": "assets/ui/stat-leaf.svg",
+      "sha256": "a17082c28f3747e5d08598f07e862159118bfc1bb460b18353b52d61b34f4bd2",
+      "bytes": 513
+    },
+    {
+      "path": "assets/win.wav",
+      "sha256": "1f361a7d20507664922a3172eb719e092acccccbd7e64f609232e553600d8795",
+      "bytes": 17684
+    },
+    {
+      "path": "assets/world-coast.png",
+      "sha256": "132ec085b917f00c3512a71c5247d9c3efa493f8b811c107d4ebfdefdffc9583",
+      "bytes": 2881207,
+      "width": 1536,
+      "height": 1024,
+      "role": "Glass Coast high-resolution illustrated background"
+    },
+    {
+      "path": "assets/world-forest.png",
+      "sha256": "21cbbf52eb0cbb5a7465c584d6597103e2e89595267b7d0523d5f4a1abe9a941",
+      "bytes": 3234254,
+      "width": 1536,
+      "height": 1024,
+      "role": "Lantern Forest high-resolution illustrated background"
+    },
+    {
+      "path": "assets/world-ruins.png",
+      "sha256": "31d33c017f5d76a50d41c1716a61e7db30d48bf8f6c2e1a58bd9bc916cd71fd6",
+      "bytes": 3223838,
+      "width": 1536,
+      "height": 1024,
+      "role": "Moon Ruins high-resolution illustrated background"
+    },
+    {
+      "path": "assets/worlds.png",
+      "sha256": "d206993b121e013784501f09bba1f76c75b04efa428ea44e04ce3fa83c8d2072",
+      "bytes": 2893535,
+      "width": 1536,
+      "height": 1024
+    }
+  ]
+}

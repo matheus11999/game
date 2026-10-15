@@ -1,85 +1,64 @@
-# Brumora — MVP 0.1
+# TaskMon — versão local 0.2
 
-Jogo nativo de criaturas em pixel art, expedições AFK e intervenção tática. Windows é o primeiro alvo. Cliente Godot 4.7.2 + GDScript; servidor Node.js 24 + TypeScript; persistência SQLite local.
+Jogo nativo de criaturas: expedições AFK com o jogo aberto, equipe de até três companheiros, combate tático, materiais e aprimoramentos temporizados. Godot 4.7.2 + servidor TypeScript/Node 24 + SQLite.
 
-## Testar no Windows
+**Continuar na cloud:** leia [docs/CLOUD_HANDOFF.md](docs/CLOUD_HANDOFF.md). Este checkpoint inclui as novas peças e rigs de quinze criaturas, ainda em integração; não equivale a animação final aprovada. A memória de regras e arte acompanha o código.
 
-1. Extraia **toda** a pasta do ZIP `Brumora-MVP-Windows-x64.zip` para uma pasta gravável, como Documentos. Não execute de dentro do ZIP.
-2. Abra `Iniciar-Brumora.bat`. O runtime Node está incluído: não precisa instalar Godot, Node ou abrir navegador.
-3. Digite um nome, escolha Fagulim (ataque), Musgudo (tanque) ou Lunélia (cura).
-4. Clique **Partir em expedição**. A cada 20 segundos recebe moedas/XP; a cada 60 segundos encontra outra criatura. Há três vagas na equipe.
-5. Use **Intervir na rota**, **Habilidade**, **Proteger** ou **Auto** para testar combate. Vença chefes para abrir as outras regiões.
-6. Use **Conexão → Criar outra caravana** para testar um segundo jogador. Você poderá alternar entre as caravanas salvas e desafiar a primeira na Arena.
+## Jogar no Windows
 
-O launcher encerra o servidor que ele próprio iniciou quando o jogo fecha. Recompensas AFK serão calculadas na próxima abertura, por até 8 horas. Para manter o servidor independente e testar várias janelas, execute `Iniciar-Servidor.bat` primeiro e deixe sua janela aberta. Depois abra o jogo pelo launcher; ele reutiliza o servidor existente. Ctrl+C na janela do servidor encerra esse processo.
+No pacote `TaskMon-MVP-Windows-x64.zip`, extraia tudo para uma pasta gravável e abra `Iniciar-TaskMon.bat`. O runtime Node acompanha o pacote. Para o projeto local de desenvolvimento, o atalho **TaskMon** da Área de Trabalho inicia o Docker e o cliente.
 
-O pacote é um MVP ainda sem assinatura digital. A validação de Windows nativo está pendente; o aplicativo foi exportado na nuvem e seus fluxos foram testados no Godot/Linux. Os executáveis exigem Windows x64 compatível com Godot 4.6 e suporte OpenGL 3.3.
+- Escolha uma criatura e seu nome.
+- **Explorar** inicia a rota; **Auto** permite encontros automáticos na janela normal. O rodapé também pode combater automaticamente.
+- **Mapas** mostra imagem, dificuldade em estrelas e GS recomendado. Chefes abrem as próximas regiões.
+- A **mochila** abre o inventário; a **estrela** abre a coleção; o **troféu** abre o perfil e as conquistas.
+- Nos cards, o ícone de melhoria abre atributos, passiva, ativa, materiais e prazo de aprimoramento.
+- O botão de expandir no rodapé ou **Escape** restaura a janela.
+- Passe o mouse nos ícones para ver sua função. Foco de teclado e estados de espera estão disponíveis.
 
-## O que está implementado
+## Progressão
 
-- Seis espécies originais, três iniciais e equipe de até três membros.
-- Vida, ataque, defesa, velocidade; indivíduos 0–15 por atributo; quatro raridades; aparência luminosa cosmética.
-- Níveis 1–20, XP e treino por moedas obtidas no jogo.
-- Habilidades de dano, cura e escudo, recargas, crítico e iniciativa por velocidade.
-- Três cenários detalhados, paralaxe, marcos de viagem, caravana em movimento, criaturas detalhadas e efeitos sonoros próprios.
-- Exploração AFK, retorno após reinício e limite de coleção de 80 criaturas.
-- Nove inimigos/chefes com arte própria e efeitos distintos; PvE manual/automático e desbloqueio de rotas.
-- Modo rodapé com batalhas automáticas, avanço após vitória e retomada da viagem.
-- Contas locais persistentes, troca de caravanas, duelos assíncronos entre contas, ranking e Hall de exploradores.
-- Servidor autoritativo, autenticação por chave de sessão e ações idempotentes.
+**XP, moedas e materiais vêm exclusivamente dos inimigos abatidos em combate. A viagem exige o cliente aberto; tempo parado não concede XP nem moedas.** O servidor recebe sinais de presença, com tolerância de oito segundos para atrasos de rede. Ao fechar o cliente, o período offline é descartado. Não há compra de XP.
 
-## Limites desta versão
+O nível da criatura (1–20) vem dos inimigos abatidos. XP é creditada uma vez ao concluir a batalha, apenas aos participantes; reservas e treino não recebem XP. A curva inicial considera nível e força dos inimigos e será balanceada com testes. Moedas usam precisão de três casas decimais, calculadas em milésimos inteiros no servidor. O aprimoramento é uma progressão separada (0–10), paga com materiais de abates e moedas. Cada grau acrescenta 4 pontos percentuais ao bônus de atributos, 1 ponto percentual à passiva e 3 pontos percentuais ao poder da ativa. O prazo é `60 × grau-alvo²` segundos: de 1 a 100 minutos. Os materiais são consumidos uma vez ao iniciar. A fila fica salva e conclui mesmo após fechar o jogo; até lá, a criatura mantém o grau anterior.
 
-Não há PvP ao vivo, amigos/convites Steam, temporadas, evolução visual, negociação, publicação nas lojas ou builds mobile. O mapa é uma rota lateral automática, não um mundo controlável com teclado. Os atlas detalhados têm poses ilustradas; seus movimentos, respiração e efeitos são animados no cliente. Ciclos completos com desenhos diferentes de caminhada/ataque permanecem uma evolução artística futura. O servidor local é de protótipo: o dono do computador controla arquivos e relógio. Ele não deve ser exposto diretamente à Internet.
+O inventário começa com quatro espaços para tipos de materiais; quantidades do mesmo material empilham. O botão **+2** compra espaços com moedas, até 20. Se não houver espaço para um novo tipo, o loot fica no baú de resgate. Nada é descartado por falta de espaço.
 
-O jogo compartilha projeto e dados para futuros builds mobile, mas interfaces touch, ciclo de vida, assinaturas, plugins das lojas e testes em aparelhos ainda serão necessários. Para iOS, é necessário Mac com Xcode.
+Vitórias PvE fornecem essência e material regional; chefes também dão núcleos e selos. A arena assíncrona oferece materiais nas primeiras cinco vitórias de cada dia UTC. O treino não dá loot. O GS soma o poder da equipe equipada; composição, habilidades e recargas continuam importantes. Na arena, atributos e aprimoramentos são normalizados.
 
-## Dados e recuperação
+## Arte e movimento
 
-- Servidor: `server/data/brumora.sqlite`, `brumora.sqlite-wal` e `brumora.sqlite-shm` quando presentes.
-- Cliente: `%APPDATA%/Godot/app_userdata/Brumora — MVP/connection.cfg` guarda as chaves de acesso às caravanas. Não compartilhe esse arquivo.
-- Para backup, encerre servidor e jogo e copie `server/data` e `connection.cfg`. O ZIP distribuído não contém contas de teste, banco, chaves ou logs.
-- Se aparecer sem conexão, confirme que o servidor está rodando e o endereço em **Conexão** é `http://127.0.0.1:8787`.
-- Se outro serviço ocupa a porta, encerre o serviço conflitante ou inicie o servidor com `BRUMORA_PORT` e altere a URL no cliente.
+A versão ativa usa os cenários ilustrados em alta resolução, um por região, com terreno detalhado e paralaxe. O experimento de cenário inteiramente procedural foi rejeitado e não é usado pelo cliente.
 
-## Desenvolvimento
+Os atlas de criaturas são texturas com transparência, animadas por um rig de malha ponderada: articulação de membros, apoio/retorno dos pés, cauda, orelhas, asas, idle e preparação de ataques. Projéteis, cura, escudos, aparição e desaparecimento são efeitos nativos independentes. Isso não equivale a um conjunto completo de animações desenhadas quadro a quadro. A evolução futura está documentada em `docs/CREATURE_MOTION.md`.
 
-### Servidor com Docker Desktop
+A memória visual está em `docs/ASSET_REGISTRY.md`. Reutilize sempre os assets canônicos dos itens e espécies. Não gere versões contraditórias do mesmo item.
 
-Na raiz deste repositório, usando containers Linux:
+## Desenvolvimento local
 
-```sh
+Na raiz do projeto:
+
+```powershell
 docker compose up --build -d
-docker compose logs -f server
-```
-
-Testes do servidor sem instalar Node no host:
-
-```sh
 docker compose --profile tools run --build --rm test
 ```
 
-Abra `project.godot` no Godot **4.7.2** e pressione **F6** na cena `main.tscn` ou **F5** para o projeto. O cliente usa `http://127.0.0.1:8787`. Não é necessário instalar Node no Windows quando o servidor roda no Docker. O volume `brumora-data` guarda o progresso. `docker compose down` para o servidor preserva o volume; não use `down -v` se quiser manter os dados.
+Abra `project.godot` no Godot 4.7.2 e execute com **F5**. O cliente conecta em `http://127.0.0.1:8787`. O servidor deve permanecer em loopback. Para verificar tipos: `npm ci --prefix server` e `npm run typecheck --prefix server`.
 
-O Docker executa o servidor; o jogo e o editor Godot continuam nativos no Windows. A execução Docker deve ser validada localmente se o ambiente de nuvem não oferecer daemon Docker.
+Testes: `tests/server.test.ts` cobre economia, autenticação, idempotência e persistência; `tests/ui_smoke.gd` usa servidor de desenvolvimento e sessão separada; `tests/visual_review.gd` usa fixtures visuais para rever os atlas, telas e efeitos. Fixtures não são contas do usuário. O cenário procedural tem teste próprio apenas como experimento.
 
-Para a próxima IA, leia primeiro `AGENTS.md`, `docs/LOCAL_HANDOFF.md`, `docs/ART_DIRECTION.md` e `docs/VALIDACAO.md`. As decisões de arte e o estado real de implementação estão persistidos nesses arquivos.
+Para exportar, instale os templates oficiais 4.7.2, verifique o runtime Windows Node 24, defina `GODOT_BIN` e `NODE_WINDOWS_EXE` e execute `python tools/build_windows.py`. O script cria ZIP Windows e ZIP de código sem banco, credenciais, logs ou caches.
 
-### Servidor sem Docker
+## Progresso e backup
 
-Abra `project.godot` com Godot 4.7.2. No terminal, dentro de `server`:
+No Docker, o banco está no volume `game_brumora-data`. **Não use `docker compose down -v`.** O nome legado do volume e o banco `brumora.sqlite` foram preservados para manter progresso. Com Node direto, os dados ficam em `server/data`.
 
-```sh
-npm ci
-npm test
-npm run typecheck
-npm start
-```
+O cliente mantém a pasta legada `%APPDATA%/Godot/app_userdata/Brumora — MVP/connection.cfg`, mesmo com a marca TaskMon. Ela contém chaves de sessão; não compartilhe. Pare o servidor antes de fazer backup do banco. Um backup local anterior à atualização foi salvo fora do repositório.
 
-O runtime precisa ser Node 24 ou superior, com suporte nativo a TypeScript e `node:sqlite`. Nenhuma dependência npm é necessária para executar o servidor; as dependências fixadas no lockfile são apenas para verificação estática.
+## Escopo atual
 
-Para recriar os atlas: Python 3 + Pillow, `python tools/make_art.py`. Para exportar: templates oficiais Godot 4.7.2 instalados, runtime Windows Node verificado e `NODE_WINDOWS_EXE` definido; execute `python tools/build_windows.py`. Consulte `docs/THIRD-PARTY.md` para licenças.
+Seis espécies de coleção, nove inimigos/chefes, três regiões, equipe, XP, materiais, inventário, aprimoramentos com tempo, GS, perfil, conquistas, arena assíncrona e rodapé. PvP ao vivo, lojas Steam/mobile, evoluções com novas formas, animações desenhadas completas e conteúdo de longa duração continuam sendo etapas futuras. Esta é uma base jogável em desenvolvimento.
 
-O teste `tests/ui_smoke.gd` usa a instância local de servidor, cria uma conta de teste e verifica fluxos do cliente. Ele deve ser rodado numa base de desenvolvimento, não numa base de produção. Capturas vão para `user://test-captures`; a variável `BRUMORA_CAPTURE_DIR` permite escolher outra pasta.
 
-Planejamento completo em `docs/PLANO.md`; evidências e limitações em `docs/VALIDACAO.md`.
+
+A vida da equipe é preservada entre encontros da mesma expedição. Wipe ou retorno encerra a jornada e mostra um resumo de duração, batalhas, abates e ganhos. Iniciar uma nova jornada restaura a equipe uma vez. A viagem usa nome/nível e inspeção por olho junto da criatura, sem os cards inferiores. Velocidade visual e passadas compartilham os parâmetros travel_speed/world_speed_multiplier no inspetor Godot.

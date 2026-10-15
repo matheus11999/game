@@ -5,3 +5,14 @@ releases/
 *.log
 *.tmp
 .DS_Store
+.env
+.env.*
+!.env.example
+connection.cfg
+*.sqlite
+*.sqlite3
+*.sqlite-wal
+*.sqlite-shm
+*.db
+*.db-wal
+*.db-shm

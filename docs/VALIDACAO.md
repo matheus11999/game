@@ -1,3 +1,24 @@
+
+## TaskMon 0.2 — revisão Windows local
+
+Esta seção substitui o estado visual e de AFK descrito no histórico abaixo.
+
+- 25 testes do servidor passaram no Windows e no container Node24, incluindo idempotência, ownership, loot excedente, custos/limites, presença com jogo aberto, GS, identidade estável da batalha e conclusão de aprimoramento após reinício real do SQLite.
+- TypeScript passou com tsc --noEmit.
+- Godot4.7.2 importou e executou nativamente com OpenGL Compatibility na NVIDIA GeForce RTX5050 Laptop GPU.
+- Revisão gráfica cobriu todas as15 espécies e45 sons, os três cenários ilustrados, mapa, inventário compacto, perfil/conquistas, cards, habilidades e rodapé. O mundo procedural foi testado como experimento e depois rejeitado pelo usuário; ele está desativado.
+- UI foi revisada com Inter500, Cinzel, botões contidos e feedback de hover/press. Foco de teclado e estados de comandos durante animação passaram em teste gráfico dedicado.
+- Cena real com seis rigs: mediana16.662ms/quadro, p95 16.703ms, CPUmediana8.054ms (90 quadros,15 de aquecimento). Medição pontual neste hardware, não garantia universal.
+- Smoke integrado final passou com failures=0: registro, GS, rotas, UI contextual, turnos sem repetir spawn, vitória/loot, início do aprimoramento com materiais, arena, rodapé automático, Escape e conclusão do prazo do aprimoramento.
+- Teste gráfico de projéteis detectou pixels visíveis entre emissor e alvo para ataques básicos das seis espécies. Animações de corpo são complementadas por emissão, trajetória, trilha, impacto e recuperação.
+- Saves preservados no volume original game_brumora-data; backup anterior à atualização salvo fora do repositório. Sessão do cliente mantém o caminho legado.
+
+A execução de uma animação com rig não cria um conjunto completo de poses desenhadas para cada criatura. Expansões de conteúdo, ciclos desenhados, áudio final produzido em estúdio, balanceamento prolongado e testes de outros hardwares continuam sendo trabalho de produção futuro.
+
+---
+
+# Histórico anterior
+
 # Validação da entrega
 
 ## Validação anterior na nuvem Linux — Godot 4.6.3
@@ -39,3 +60,13 @@ O ambiente de execução é Linux. O pacote Windows é exportado e sua estrutura
 A interface e o backend são de MVP. O ranking é local, sem temporadas ou proteção completa contra abuso de contas. O backend aceita HTTP apenas no loopback por padrão e não deve ser publicado diretamente; hospedagem requer HTTPS, autenticação recuperável e revisão de produção.
 
 O banco, sessões e contas usados nos testes não são incluídos no ZIP distribuído. O launcher automático reserva uma única janela para manter o ciclo de vida do servidor previsível; para testar dois jogadores, abrir `Iniciar-Servidor.bat` primeiro e depois executar `Iniciar-Brumora.bat` em duas janelas. Fechar essas janelas não encerra o servidor iniciado manualmente. A pesquisa atual de concorrentes e disponibilidade da marca/domínios continua limitada pelos bloqueios de rede documentados no plano.
+
+
+## Revisão de HUD e retomada — 14/10/2026
+Godot 4.7.2: import sem erros e visual_review com failures=0 após revisão de botões, título, GS, HP e efeitos. Capturas forçam redesenho antes da leitura do framebuffer. Teste de retomada usa GET /api/state no resultado persistido e aciona o sinal pressed do botão ContinueBattle, verificando retorno à exploração. O erro histórico relatado no editor não apareceu nos logs disponíveis nem no teste atual; não atribuir causa sem evidência. Limpeza de animações foi reforçada ao carregar/encerrar batalhas.
+
+
+## Revisão final — jornada persistente e arte de folhagem
+40 testes autoritativos do servidor no Docker, typecheck, e 58 verificações do UI smoke integrado passaram. UI smoke terminou sem falhas, erros, avisos ou vazamentos de recursos após drenagem do áudio no teardown. O teste nativo/HTTP de expedição confirmou desgaste de HP mantido entre encontros, retorno com resumo real, moeda com três casas, ícones canônicos e feedback. Wipe contra chefe real encerrou a jornada e expandiu o rodapé para exibir o resumo. Nenhum crédito de XP/moedas por ticks.
+Velocidade visual: 12 pares de escala/aceleração comprovaram o recuo do pé na velocidade do chão, sem multiplicar aceleração duas vezes. Índices/corte de poses, 15 estados de rig por espécie, variação de VFX por exemplar, projéteis e 540 recortes de câmera aprovados. A raposa usa rig quadrúpede contínuo; oito poses anteriores de caminhada são referência preservada, não o ciclo ativo.
+Fonte atual TaskMon-Interface (Alegreya Sans SC Medium OFL), sem fallback de sistema, Cinzel nos títulos. Revisão final independente em DESIGN_REVIEW.md; notas são avaliação interna do recorte observado, sem garantia universal de desempenho, hardware ou plataformas. Builds e backups preservam a pasta/volume legado de saves.

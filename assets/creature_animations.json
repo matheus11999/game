@@ -1,0 +1,1 @@
+{"ember":{"texture":"res://assets/animations/ember-attack.png","columns":2,"rows":2,"frames":["anticipation","cast","recoil","recover"],"reference_frame":3,"muzzles":[[0.95,0.51],[0.93,0.54],[0.94,0.21],[0.95,0.47]]}}

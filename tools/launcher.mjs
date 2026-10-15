@@ -21,7 +21,7 @@ function assertNoOwnedLauncher() {
     if (error.code === 'ESRCH') { unlinkSync(lockPath); return; }
     throw error;
   }
-  throw new Error('Brumora já está aberto com servidor automático. Para duas janelas, feche o jogo e inicie Iniciar-Servidor.bat primeiro.');
+  throw new Error('TaskMon já está aberto com servidor automático. Para duas janelas, feche o jogo e inicie Iniciar-Servidor.bat primeiro.');
 }
 
 function acquireLock() {
@@ -39,7 +39,7 @@ function acquireLock() {
       if (!Number.isInteger(pid) || pid < 1) throw new Error('Inicializador em andamento. Aguarde e tente novamente.');
       try {
         process.kill(pid, 0);
-        throw new Error('Brumora já está aberto nesta pasta. Feche a outra janela antes de iniciar novamente.');
+        throw new Error('TaskMon já está aberto nesta pasta. Feche a outra janela antes de iniciar novamente.');
       } catch (probe) {
         if (probe.code !== 'ESRCH') throw probe;
       }
@@ -59,7 +59,7 @@ async function health() {
   }
   let data;
   try { data = await response.json(); } catch { throw new Error('Outro serviço ocupa a porta 8787.'); }
-  if (!response.ok || data.ok !== true || data.game !== 'Brumora' || data.version !== version) {
+  if (!response.ok || data.ok !== true || data.game !== 'TaskMon' || data.version !== version) {
     throw new Error('Outro serviço ou versão ocupa a porta 8787.');
   }
   return true;
@@ -98,9 +98,9 @@ try {
     }
     if (!ready) throw new Error('Servidor local não respondeu. Consulte server/data/server.log.');
   }
-  console.log('Servidor pronto. Abrindo Brumora…');
-  console.log('Ao fechar o jogo, o servidor iniciado por este launcher será encerrado. Seu AFK será calculado na próxima abertura.');
-  game = spawn(resolve(root, 'Brumora.exe'), [], { cwd: root, stdio: 'ignore' });
+  console.log('Servidor pronto. Abrindo TaskMon…');
+  console.log('Ao fechar o jogo, o servidor iniciado por este launcher será encerrado. A expedição AFK progride apenas com o jogo aberto.');
+  game = spawn(resolve(root, 'TaskMon.exe'), [], { cwd: root, stdio: 'ignore' });
   const code = await new Promise((resolveExit, reject) => { game.once('error', reject); game.once('exit', resolveExit); });
   if (code !== 0) throw new Error('O jogo terminou com erro. Verifique o log Godot em %APPDATA%/Godot/app_userdata/Brumora — MVP/logs.');
 } catch (error) {

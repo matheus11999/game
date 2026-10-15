@@ -1,8 +1,8 @@
 FROM node:24.19.0-bookworm-slim@sha256:a9f5f7c91a432850b2a8a7797adf5eadb6c733ceed61167806cee7ea7fbc29df AS base
 WORKDIR /app
 ENV NODE_ENV=production BRUMORA_HOST=0.0.0.0 BRUMORA_PORT=8787
-COPY --chown=node:node server/package.json server/index.ts server/engine.ts ./server/
-COPY --chown=node:node assets/species.json assets/enemies.json ./assets/
+COPY --chown=node:node server/package.json server/index.ts server/engine.ts server/progression.ts ./server/
+COPY --chown=node:node assets/*.json ./assets/
 RUN mkdir -p /app/server/data && chown node:node /app/server/data
 USER node
 EXPOSE 8787

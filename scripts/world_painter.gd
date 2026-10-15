@@ -3,15 +3,28 @@ extends RefCounted
 ## distance is world travel in pixels; time drives ambient detail independently.
 ## The caller freezes distance during battle (moving=false also freezes route drift).
 
+var ground_texture: Texture2D
+var camera_zoom := 1.0
+# Reserve illustration margins so exploration at 0.90 can show more scenery
+# while battle at 1.10 approaches smoothly without stretching its aspect.
+const PANORAMA_OVERSCAN := 1.12
+# Canonical illustrations contain a painted foreground floor around source
+# y=670–710 / 1024. It must NEVER be sampled as background: the scrolling
+# ground strip below is the sole walkable plane. Fractions leave a safe margin
+# above that floor, including at the widest exploration zoom.
+const BACKDROP_FRACTIONS := [0.61, 0.60, 0.61]
+
 const PALETTES = [
 	[Color("111e30"), Color("2b5361"), Color("83dfba"), Color("f2cd85")],
 	[Color("111b35"), Color("315c75"), Color("78ced5"), Color("c5a5ef")],
 	[Color("17172e"), Color("454568"), Color("c5a5ef"), Color("f2cd85")],
 ]
 
-func paint(canvas: CanvasItem, atlas: Texture2D, region: int, rect: Rect2, time: float, distance: float, moving: bool, compact: bool) -> void:
+func paint(canvas: CanvasItem, atlas: Texture2D, region: int, rect: Rect2, time: float, distance: float, moving: bool, compact: bool, single: bool = false) -> void:
 	if rect.size.x <= 0.0 or rect.size.y <= 0.0:
 		return
+	if ground_texture == null and ResourceLoader.exists("res://assets/ground-taskmon.png"):
+		ground_texture = load("res://assets/ground-taskmon.png")
 	var biome := clampi(region, 0, 2)
 	var colors: Array = PALETTES[biome]
 	var scale := clampf(rect.size.y / 390.0, 0.6, 1.5)
@@ -21,7 +34,7 @@ func paint(canvas: CanvasItem, atlas: Texture2D, region: int, rect: Rect2, time:
 	canvas.draw_rect(rect, colors[0])
 	_draw_sky(canvas, rect, biome, ambient, travel, scale)
 	if atlas != null:
-		_draw_panorama(canvas, atlas, biome, rect, travel)
+		_draw_panorama(canvas, atlas, biome, rect, travel, single, compact)
 	else:
 		_draw_distant_ridges(canvas, rect, biome, travel, scale)
 	# Sparse independent distant mist ribbons help separate the baked panorama layers.
@@ -39,26 +52,34 @@ func paint(canvas: CanvasItem, atlas: Texture2D, region: int, rect: Rect2, time:
 	if moving:
 		_draw_route_glints(canvas, rect, biome, travel, scale)
 
-func _draw_panorama(canvas: CanvasItem, atlas: Texture2D, biome: int, rect: Rect2, travel: float) -> void:
-	var texture_size := atlas.get_size()
-	var row_height := texture_size.y / 3.0
-	if row_height <= 0.0 or texture_size.x <= 0.0:
+func _draw_panorama(canvas: CanvasItem, atlas: Texture2D, biome: int, rect: Rect2, travel: float, single: bool = false, compact: bool = false) -> void:
+	# Frame the painting above the walkable plane rather than hiding its lower
+	# quarter behind terrain. This preserves the coastal sea and distant vistas.
+	# A small overlap behind the strip prevents a seam at the contact edge.
+	var backdrop := Rect2(rect.position, Vector2(rect.size.x, maxf(1.0, rect.size.y - (56.0 if compact else 92.0) + 4.0)))
+	var source := _panorama_source(atlas.get_size(), biome, backdrop.size, travel, single)
+	if not source.has_area():
 		return
-	# Aspect-fill a panoramic row. Source wraps, never sampling a neighboring biome.
-	var source_width := minf(texture_size.x, row_height * rect.size.x / rect.size.y)
-	var source_height := minf(row_height, texture_size.x * rect.size.y / rect.size.x)
-	var row_y := biome * row_height + (row_height - source_height) * 0.5
-	var phase := fposmod(travel * 0.07, texture_size.x)
-	var remaining := source_width
-	var destination_x := rect.position.x
-	var source_x := phase
-	while remaining > 0.01:
-		var chunk := minf(remaining, texture_size.x - source_x)
-		var draw_width := rect.size.x * chunk / source_width
-		canvas.draw_texture_rect_region(atlas, Rect2(destination_x, rect.position.y, draw_width, rect.size.y), Rect2(source_x, row_y, chunk, source_height), Color.WHITE, false, true)
-		destination_x += draw_width
-		remaining -= chunk
-		source_x = 0.0
+	canvas.draw_texture_rect_region(atlas, backdrop, source, Color.WHITE, false, true)
+
+func _panorama_source(texture_size: Vector2, biome: int, viewport_size: Vector2, travel: float, single: bool = false) -> Rect2:
+	var row_height := texture_size.y if single else texture_size.y / 3.0
+	if row_height <= 0.0 or texture_size.x <= 0.0 or viewport_size.x <= 0.0 or viewport_size.y <= 0.0:
+		return Rect2()
+	var aspect := viewport_size.x / viewport_size.y
+	var backdrop_height: float = row_height * BACKDROP_FRACTIONS[clampi(biome, 0, 2)]
+	var max_width := minf(texture_size.x, backdrop_height * aspect)
+	var source_width := minf(max_width, max_width / PANORAMA_OVERSCAN / clampf(camera_zoom, 0.5, 2.0))
+	var source_height := source_width / aspect
+	var row_y: float = (0.0 if single else clampi(biome, 0, 2) * row_height) + (backdrop_height - source_height) * 0.5
+	# Reflect within available crop margins instead of wrapping unrelated ends
+	# of a painted scene together. Smoothstep makes reversals gently decelerate.
+	var span := maxf(0.0, texture_size.x - source_width)
+	var source_x := 0.0
+	if span > 0.001:
+		var phase := pingpong(travel * 0.07 + span * 0.5, span) / span
+		source_x = span * smoothstep(0.0, 1.0, phase)
+	return Rect2(source_x, row_y, source_width, source_height)
 
 func _draw_sky(canvas: CanvasItem, rect: Rect2, biome: int, time: float, travel: float, scale: float) -> void:
 	var colors: Array = PALETTES[biome]
@@ -85,8 +106,29 @@ func _draw_distant_ridges(canvas: CanvasItem, rect: Rect2, biome: int, travel: f
 		_poly(canvas, rect, points, Color(colors[1], 0.32 + layer * 0.12))
 
 func _draw_ground(canvas: CanvasItem, rect: Rect2, biome: int, travel: float, scale: float, compact: bool) -> void:
+	var contact := rect.end.y - (56.0 if compact else 92.0)
+	if ground_texture != null:
+		var row_height := float(ground_texture.get_height()) / 3.0
+		var tex_height := row_height * 0.78
+		var target_height := (125.0 if not compact else 80.0) * clampf(camera_zoom, 0.5, 2.0)
+		# Even a very wide camera must keep terrain down to the viewport bottom;
+		# shrinking the whole strip must not reveal background beneath the floor.
+		target_height = maxf(target_height, (rect.end.y - contact) / 0.91)
+		var tile_width := ground_texture.get_width() * target_height / tex_height
+		var phase := fposmod(travel * 0.64, tile_width)
+		var x := rect.position.x - phase
+		while x < rect.end.x:
+			var destination := Rect2(x, contact - target_height * 0.09, tile_width, target_height)
+			var source := Rect2(0, biome * row_height + row_height * 0.22, ground_texture.get_width(), tex_height)
+			var clipped := destination.intersection(rect)
+			if clipped.has_area():
+				var uv := Rect2(source.position + (clipped.position - destination.position) / destination.size * source.size, clipped.size / destination.size * source.size)
+				canvas.draw_texture_rect_region(ground_texture, clipped, uv)
+			x += tile_width
+		return
+
 	var colors: Array = PALETTES[biome]
-	var ground := rect.end.y - (17.0 if compact else 29.0) * scale
+	var ground := rect.end.y - (56.0 if compact else 92.0)
 	_poly(canvas, rect, PackedVector2Array([Vector2(rect.position.x, ground + 3), Vector2(rect.position.x + rect.size.x * 0.25, ground), Vector2(rect.position.x + rect.size.x * 0.6, ground + 5), Vector2(rect.end.x, ground + 1), rect.end, Vector2(rect.position.x, rect.end.y)]), Color(colors[0], 0.48))
 	for i in range(21):
 		var x := rect.position.x + fposmod(i * 97.0 - travel * 0.62, rect.size.x + 100.0) - 50.0
@@ -109,6 +151,7 @@ func _draw_ground(canvas: CanvasItem, rect: Rect2, biome: int, travel: float, sc
 					_crystal(canvas, rect, Vector2(x,y+9*scale), (12 + i%3*4)*scale, Color(colors[2],0.54))
 				else:
 					_poly(canvas, rect, PackedVector2Array([Vector2(x,y),Vector2(x+17*scale,y-4*scale),Vector2(x+26*scale,y+3*scale),Vector2(x+22*scale,y+9*scale),Vector2(x,y+9*scale)]),Color(colors[1],0.7))
+
 
 func _crystal(canvas: CanvasItem, rect: Rect2, base: Vector2, height: float, color: Color) -> void:
 	var tip := base + Vector2(2,-height)

@@ -1,0 +1,8 @@
+[
+  {"id":"essence","name":"Essência vital","color":"e6bd6b","icon":"spark","source":"Vitórias PvE e Arena"},
+  {"id":"fibre","name":"Fibra ancestral","color":"86d8a6","icon":"leaf","source":"Prado das Lanternas"},
+  {"id":"pearl","name":"Pérola de maré","color":"7edee0","icon":"orb","source":"Costa de Vidro"},
+  {"id":"shard","name":"Fragmento lunar","color":"c9a6f4","icon":"crystal","source":"Ruínas do Luar"},
+  {"id":"core","name":"Núcleo guardião","color":"f49c75","icon":"core","source":"Chefes de todas as regiões"},
+  {"id":"sigil","name":"Selo de conquista","color":"efdc9e","icon":"shield","source":"Chefes e até 5 vitórias de Arena por dia"}
+]

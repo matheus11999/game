@@ -1,0 +1,66 @@
+{
+  "generator": "tools/make_audio.mjs",
+  "license": "Original synthesis for TaskMon",
+  "profiles": {
+    "ember": [
+      220,
+      "fire"
+    ],
+    "moss": [
+      145,
+      "wood"
+    ],
+    "luna": [
+      660,
+      "chime"
+    ],
+    "tide": [
+      390,
+      "water"
+    ],
+    "crag": [
+      310,
+      "crystal"
+    ],
+    "cloud": [
+      520,
+      "wind"
+    ],
+    "thornbud": [
+      175,
+      "wood"
+    ],
+    "pebblebug": [
+      115,
+      "crystal"
+    ],
+    "reefclaw": [
+      270,
+      "water"
+    ],
+    "tidejelly": [
+      470,
+      "water"
+    ],
+    "runewisp": [
+      740,
+      "chime"
+    ],
+    "shardguard": [
+      350,
+      "crystal"
+    ],
+    "rootelder": [
+      92,
+      "wood"
+    ],
+    "abyssmaw": [
+      130,
+      "water"
+    ],
+    "moonwarden": [
+      580,
+      "chime"
+    ]
+  }
+}
